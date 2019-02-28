@@ -4,7 +4,7 @@ LABEL maintainer="Rad Suchecki <rad.suchecki@csiro.au>"
 SHELL ["/bin/bash", "-c"]
 
 RUN conda install --override-channels -c conda-forge -c bioconda -c default \
-  samtools=1.9 \
+  fastqc=0.11.8 \
   multiqc=1.7 \
   trimmomatic=0.36 \
   pigz=2.3.4 \
