@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
-reference = Channel.fromPath(params.ref.base_url + params.ref.chr. + ".fsa.zip")
+reference = Channel.fromPath(params.ref.base_url + params.ref.chr + ".fsa.zip")
+accessionsChannel = Channel.from(params.accessions)
 
 process bgzip_chromosome {
 	input:
@@ -11,10 +12,10 @@ process bgzip_chromosome {
 
 	script:
   """
-		unzip -p ${ref} \
-		  | bgzip --threads ${task.cpus} > chr
+		unzip -p ${ref}
+		  | bgzip --threads ${task.cpus} \
+		  > ${ref}.gz
 	"""
-	// > ${ref.take(filename.lastIndexOf('.')}.gz// """
 }
 
 process bgzip_chromosome_subregion {
@@ -22,7 +23,7 @@ process bgzip_chromosome_subregion {
 		file(chr) from chromosomesChannel
 
 	output:
-		file(subregion) into subregionsChannel
+		file('subregion') into subregionsChannel
 
 	script:
 	"""
@@ -35,7 +36,7 @@ process bgzip_chromosome_subregion {
 process extract_reads {
   tag { accession }
   input:
-    accession from Channel.from(params.accessions)
+    val accession from accessionsChannel
 
   output:
     set val(accession), file('*.fastq.gz') into extractedReadsChannel
@@ -50,3 +51,41 @@ process extract_reads {
     // | samtools fastq -F 0x900 -1 R1.fastq.gz -2 R2.fastq.gz -s /dev/null -0 /dev/null -
 }
 
+
+process bwa_index {
+	input:
+		file(ref) from subregionsChannel
+
+	output:
+		file("*") into indexChannel
+
+  script:
+	"""
+		bwa index -a bwtsw ${ref}
+	"""
+}
+
+
+
+// rule bwa_mem:
+// 	input:
+// 		reference = expand(REFERENCE + ".{ext}", ext=["amb","ann","bwt","pac","sa"]),
+// 		reads     = [ "qc_reads/{sample}_R1.fastq.gz", "qc_reads/{sample}_R2.fastq.gz"],
+// #		r1        = "qc_reads/{sample}_R1.fastq.gz",
+// #		r2        = "qc_reads/{sample}_R2.fastq.gz",
+// 	output:
+// 		"mapped/{sample}.bam"
+// 	conda:
+// 		"envs/tutorial.yml"
+// 	params:
+// 		index      = REFERENCE,
+// 		extra      = r"-R '@RG\tID:{sample}\tSM:{sample}'",
+// 		sort       = "none",
+// 		sort_order = "queryname",
+// 		sort_extra = ""
+// 	threads:
+// 		MAX_THREADS
+// 	benchmark:
+// 		repeat("benchmarks/bwa_mem/{sample}.txt", N_BENCHMARKS),
+// 	wrapper:
+// 		"0.31.1/bio/bwa/mem"
