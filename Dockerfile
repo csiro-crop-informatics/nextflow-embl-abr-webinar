@@ -11,4 +11,6 @@ RUN conda install --override-channels -c conda-forge -c bioconda -c default \
   bwa=0.7.17 \
   samtools=1.9 \
   htslib=1.9 \
-  unzip=6.0
+  unzip=6.0 \
+  tabix \
+  wget
