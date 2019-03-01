@@ -13,4 +13,4 @@ RUN conda install --override-channels -c conda-forge -c bioconda -c default \
   htslib=1.9 \
   unzip=6.0 \
   tabix \
-  wget
+  gnu-wget
