@@ -1,2 +1,2 @@
 Bootstrap:docker
-From:csirocropinformatics/nextflow-embl-abr-webinar:latest
+From:rsuchecki/nextflow-embl-abr-webinar:latest
