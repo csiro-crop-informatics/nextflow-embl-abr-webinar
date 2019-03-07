@@ -2,7 +2,7 @@ name: tutorial
 channels:
  - bioconda
  - conda-forge
- - defaults
+ - default
 dependencies:
  - fastqc=0.11.8
  - multiqc=1.7
@@ -12,3 +12,4 @@ dependencies:
  - samtools=1.9
  - htslib=1.9
  - unzip=6.0
+ - tabix=0.2.6
