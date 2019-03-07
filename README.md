@@ -21,11 +21,10 @@ You will need
   ```
   curl -s https://get.nextflow.io | bash
   ```
-* Either Docker or Singularity to run the appropriate container with all the remaining required software
+* Conda or either one of Docker or Singularity to run the appropriate container with all the remaining required software
 
 
   [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
 
-  ![Docker Automated build](https://img.shields.io/docker/automated/rsuchecki/nextflow-embl-abr-webinar.svg)
-  ![Docker Build Status](https://img.shields.io/docker/build/rsuchecki/nextflow-embl-abr-webinar.svg)
+
   ![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)
