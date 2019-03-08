@@ -2,7 +2,7 @@
 
 referenceLink = params.ref.base_url + params.ref.chr + ".fsa.zip"
 // reference = Channel.fromPath(params.ref.base_url + params.ref.chr + ".fsa.zip")
-accessionsChannel = Channel.from(params.accessions)
+accessionsChannel = Channel.from(params.accessions).take( params.take == 'all' ? -1 : params.take )
 
 process download_chromosome {
   tag { params.ref.chr }
