@@ -1,4 +1,7 @@
-FROM rsuchecki/miniconda3:4.5.12_d42c6c234cbabb3737a145df6a52230cf2841923
+FROM rsuchecki/miniconda3:latest
+
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 
 LABEL maintainer="Rad Suchecki <rad.suchecki@csiro.au>"
 SHELL ["/bin/bash", "-c"]
@@ -14,7 +17,3 @@ RUN conda install --override-channels -c conda-forge -c bioconda -c default \
   unzip=6.0 \
   tabix=0.2.6 \
   gnu-wget=1.18
-
-RUN conda install --override-channels -c anaconda \
-  fontconfig=2.13.0
-  #font-ttf-dejavu-sans-mono
