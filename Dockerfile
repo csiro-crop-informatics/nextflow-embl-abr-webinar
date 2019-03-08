@@ -14,7 +14,3 @@ RUN conda install --override-channels -c conda-forge -c bioconda -c default \
   unzip=6.0 \
   tabix=0.2.6 \
   gnu-wget=1.18
-
-RUN conda install --override-channels -c anaconda \
-  fontconfig=2.13.0
-  #font-ttf-dejavu-sans-mono
