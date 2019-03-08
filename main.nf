@@ -1,54 +1,53 @@
 #!/usr/bin/env nextflow
 
-
 referenceLink = params.ref.base_url + params.ref.chr + ".fsa.zip"
 // reference = Channel.fromPath(params.ref.base_url + params.ref.chr + ".fsa.zip")
 accessionsChannel = Channel.from(params.accessions)
 
 process download_chromosome {
   tag { params.ref.chr }
-	input:
-		referenceLink
+  input:
+    referenceLink
 
-	output:
-		file('*') into references
+  output:
+    file('*') into references
 
-	script:
+  script:
   """
-	wget ${referenceLink}
-	"""
+  wget ${referenceLink}
+  """
 }
 
 process bgzip_chromosome {
-	cpus '4'
-	tag { ref }
-	input:
-		file ref from references
+  cpus '4'
+  tag { ref }
+  input:
+    file ref from references
 
   output:
     file('*') into chromosomesChannel
 
-	script:
+  script:
   """
-	unzip -p ${ref} \
+  unzip -p ${ref} \
     | bgzip --threads ${task.cpus} \
-	  > ${ref}.gz
-	"""
+    > ${ref}.gz
+  """
 }
 
 process bgzip_chromosome_subregion {
-	input:
-		file(chr) from chromosomesChannel
+  input:
+    file(chr) from chromosomesChannel
 
-	output:
-		file('subregion') into subregionsChannel
+  output:
+    file('subregion') into subregionsChannel
 
-	script:
-	"""
-	samtools faidx ${chr} ${params.ref.chr}:${params.ref.start}-${params.ref.end} \
-	  | bgzip --threads ${task.cpus} \
-	  > subregion
-	"""
+  script:
+  """
+  samtools faidx ${chr} ${params.ref.chr}:${params.ref.start}-${params.ref.end} \
+    | bgzip --threads ${task.cpus} \
+    > subregion
+  """
 }
 
 process extract_reads {
@@ -61,135 +60,114 @@ process extract_reads {
     // set val(accession), file('*.fastq.gz') into (extractedReadsChannel1, extractedReadsChannel2)
     // ACBarrie.realigned.bam.bai, raw_reads/ACBarrie_R1.fastq.gz, raw_reads/ACBarrie_R2.fastq.gz
 
-    script:
-    """
-    samtools view -hu "${params.bam.base_url}/chr4A_part2/${accession}.realigned.bam" ${params.bam.chr}:${params.bam.start}-${params.bam.end} \
-		  | samtools collate -uO - \
-		  | samtools fastq -F 0x900 -1 ${accession}_R1.fastq.gz -2 ${accession}_R2.fastq.gz -s /dev/null -0 /dev/null -
-    """
-    // | samtools fastq -F 0x900 -1 R1.fastq.gz -2 R2.fastq.gz -s /dev/null -0 /dev/null -
+  script:
+  """
+  samtools view -hu "${params.bam.base_url}/chr4A_part2/${accession}.realigned.bam" ${params.bam.chr}:${params.bam.start}-${params.bam.end} \
+  | samtools collate -uO - \
+  | samtools fastq -F 0x900 -1 ${accession}_R1.fastq.gz -2 ${accession}_R2.fastq.gz -s /dev/null -0 /dev/null -
+  """
+
 }
 
 process fastqc_raw {
   tag { accession }
-	input:
-		set val(accession), file('*') from extractedReadsChannel1
+  input:
+    set val(accession), file('*') from extractedReadsChannel1
 
-	output:
-		file('*') into fastqcRawResultsChannel
+  output:
+    file('*') into fastqcRawResultsChannel
 
   script:
-   	"""
-		fastqc --threads ${task.cpus} *
-	  """
+  """
+  fastqc --threads ${task.cpus} *
+  """
 }
 
 process multiqc_raw {
-	input:
-		file('*') from fastqcRawResultsChannel.collect()
+  input:
+    file('*') from fastqcRawResultsChannel.collect()
 
-	output:
-		file('*') into multiqcRawResultsChannel
+  output:
+    file('*') into multiqcRawResultsChannel
 
   script:
-		"""
-		multiqc .
-		"""
+  """
+  multiqc .
+  """
 }
-
 
 adaptersSingletonChannel = Channel.fromPath(params.adapters)
 
 process trimmomatic_pe {
-	tag {accession}
+  tag {accession}
 
-	input:
-		set val(accession), file('*') from extractedReadsChannel2
-		file(adapters) from adaptersSingletonChannel
+  input:
+    set val(accession), file('*') from extractedReadsChannel2
+    file(adapters) from adaptersSingletonChannel
 
-	output:
-	  set val(accession), file('*.gz') into (trimmedReadsChannel1, trimmedReadsChannel2)
+  output:
+    set val(accession), file('*.gz') into (trimmedReadsChannel1, trimmedReadsChannel2)
 
-	// 	r1          = "qc_reads/{accession}_R1.fastq.gz",
-	// 	r2          = "qc_reads/{accession}_R2.fastq.gz",
-	// 	# reads where trimming entirely removed the mate
-	// 	r1_unpaired = "qc_reads/{accession}_R1.unpaired.fastq.gz",
-	// 	r2_unpaired = "qc_reads/{accession}_R2.unpaired.fastq.gz",
-	script:
-	"""
-	  trimmomatic PE \
-		*.fastq.gz \
+  // 	r1          = "qc_reads/{accession}_R1.fastq.gz",
+  // 	r2          = "qc_reads/{accession}_R2.fastq.gz",
+  // 	# reads where trimming entirely removed the mate
+  // 	r1_unpaired = "qc_reads/{accession}_R1.unpaired.fastq.gz",
+  // 	r2_unpaired = "qc_reads/{accession}_R2.unpaired.fastq.gz",
+  script:
+  """
+    trimmomatic PE \
+    *.fastq.gz \
     r1_paired.fastq.gz \
-		r1_unpaired.fastq.gz \
-		r2_paired.fastq.gz \
-		r2_unpaired.fastq.gz \
-		ILLUMINACLIP:${adapters}:2:30:10:3:true \
-	  LEADING:2 \
-	  TRAILING:2 \
-		SLIDINGWINDOW:4:15 \
-		MINLEN:36
-	"""
+    r1_unpaired.fastq.gz \
+    r2_paired.fastq.gz \
+    r2_unpaired.fastq.gz \
+    ILLUMINACLIP:${adapters}:2:30:10:3:true \
+    LEADING:2 \
+    TRAILING:2 \
+    SLIDINGWINDOW:4:15 \
+    MINLEN:36
+  """
 }
 
 process fastqc_trimmed {
   tag { accession }
-	input:
-		set val(accession), file('*') from trimmedReadsChannel2
+  input:
+    set val(accession), file('*') from trimmedReadsChannel2
 
-	output:
-		file('*') into fastqcTrimmedResultsChannel
+  output:
+    file('*') into fastqcTrimmedResultsChannel
 
   script:
-   	"""
-		fastqc --threads ${task.cpus} *
-	  """
+  """
+  fastqc --threads ${task.cpus} *
+  """
 }
-// // // rule fastqc_trimmed:
-// // // 	input:
-// // // 		"qc_reads/{prefix}.fastq.gz",
-// // // 	output:
-// // // 		zip  = "reports/qc_reads/{prefix}_fastqc.zip",
-// // // 		html = "reports/qc_reads/{prefix}_fastqc.html",
-// // // 	conda:
-// // // 		"envs/tutorial.yml"
-// // // 	benchmark:
-// // // 		repeat("benchmarks/fastqc_trimmed/{prefix}.txt", N_BENCHMARKS),
-// // // 	wrapper:
-// // // 		"0.31.1/bio/fastqc"
-// // //   script:
-// // // #		"""
-// // // #		fastqc {input}
-// // // #		"""
 
-// // // rule multiqc_trimmed:
-// // // 	input:
-// // // 		expand("reports/qc_reads/{accession}_R{read}_fastqc.zip", accession=ACCESSIONS, read=[1,2]),
-// // // 	output:
-// // // 		"reports/qc_reads_multiqc.html",
-// // // 	conda:
-// // // 		"envs/tutorial.yml"
-// // // 	benchmark:
-// // // 		repeat("benchmarks/multiqc_trimmed/benchmark.txt", N_BENCHMARKS),
-// // // 	wrapper:
-// // // 		"0.31.1/bio/multiqc"
-// // //   script:
-// // // #		"""
-// // // #		multiqc --filename {output} {input}
-// // // #		"""
+process multiqc_trimmed {
+  input:
+    file('*') from fastqcTrimmedResultsChannel.collect()
 
+  output:
+    file('*') into multiqcTrimmedResultsChannel
 
-// // process bwa_index {
-// // 	input:
-// // 		file(ref) from subregionsChannel
+  script:
+  """
+  multiqc .
+  """
+}
 
-// // 	output:
-// // 		file("*") into indexChannel
+process bwa_index {
+  input:
+    file(ref) from subregionsChannel
 
-// //   script:
-// // 	"""
-// // 		bwa index -a bwtsw ${ref}
-// // 	"""
-// // }
+  output:
+    file("*") into indexChannel
+
+  script:
+  """
+  bwa index -a bwtsw ${ref}
+  """
+}
 
 
 
