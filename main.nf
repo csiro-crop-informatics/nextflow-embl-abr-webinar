@@ -70,6 +70,8 @@ process extract_reads {
 }
 
 process fastqc_raw {
+  echo true
+  time 1.m
   tag { accession }
   input:
     set val(accession), file('*') from extractedReadsChannel1
@@ -79,7 +81,10 @@ process fastqc_raw {
 
   script:
   """
-  fastqc --threads ${task.cpus} *
+  #ls -l
+  #echo
+  fastqc  --quiet --threads ${task.cpus} *
+  #zcat * | head -4
   """
 }
 
@@ -106,21 +111,16 @@ process trimmomatic_pe {
     file(adapters) from adaptersSingletonChannel
 
   output:
-    set val(accession), file('*.gz') into (trimmedReadsChannel1, trimmedReadsChannel2)
+    set val(accession), file('*.paired.fastq.gz') into (trimmedReadsChannel1, trimmedReadsChannel2)
 
-  // 	r1          = "qc_reads/{accession}_R1.fastq.gz",
-  // 	r2          = "qc_reads/{accession}_R2.fastq.gz",
-  // 	# reads where trimming entirely removed the mate
-  // 	r1_unpaired = "qc_reads/{accession}_R1.unpaired.fastq.gz",
-  // 	r2_unpaired = "qc_reads/{accession}_R2.unpaired.fastq.gz",
   script:
   """
     trimmomatic PE \
     *.fastq.gz \
-    r1_paired.fastq.gz \
-    r1_unpaired.fastq.gz \
-    r2_paired.fastq.gz \
-    r2_unpaired.fastq.gz \
+    ${accession}_R1.paired.fastq.gz \
+    ${accession}_R1.unpaired.fastq.gz \
+    ${accession}_R2.paired.fastq.gz \
+    ${accession}_R2.unpaired.fastq.gz \
     ILLUMINACLIP:${adapters}:2:30:10:3:true \
     LEADING:2 \
     TRAILING:2 \
@@ -139,7 +139,7 @@ process fastqc_trimmed {
 
   script:
   """
-  fastqc --threads ${task.cpus} *
+  fastqc --quiet --threads ${task.cpus} *
   """
 }
 
@@ -161,7 +161,8 @@ process bwa_index {
     file(ref) from subregionsChannel
 
   output:
-    file("*") into indexChannel
+    set val(ref.name), file("*") into indexChannel
+    // set val("${ref}"), file("*") into indexChannel
 
   script:
   """
@@ -170,26 +171,16 @@ process bwa_index {
 }
 
 
+process bwa_mem {
+  tag { accession }
+	input:
+    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannel1)
 
-// // // rule bwa_mem:
-// // // 	input:
-// // // 		reference = expand(REFERENCE + ".{ext}", ext=["amb","ann","bwt","pac","sa"]),
-// // // 		reads     = [ "qc_reads/{sample}_R1.fastq.gz", "qc_reads/{sample}_R2.fastq.gz"],
-// // // #		r1        = "qc_reads/{sample}_R1.fastq.gz",
-// // // #		r2        = "qc_reads/{sample}_R2.fastq.gz",
-// // // 	output:
-// // // 		"mapped/{sample}.bam"
-// // // 	conda:
-// // // 		"envs/tutorial.yml"
-// // // 	params:
-// // // 		index      = REFERENCE,
-// // // 		extra      = r"-R '@RG\tID:{sample}\tSM:{sample}'",
-// // // 		sort       = "none",
-// // // 		sort_order = "queryname",
-// // // 		sort_extra = ""
-// // // 	threads:
-// // // 		MAX_THREADS
-// // // 	benchmark:
-// // // 		repeat("benchmarks/bwa_mem/{sample}.txt", N_BENCHMARKS),
-// // // 	wrapper:
-// // // 		"0.31.1/bio/bwa/mem"
+	output:
+		file('*.bam')
+
+  script:
+  """
+  bwa mem -t ${task.cpus} -R '@RG\\tID:${accession}\\tSM:${accession}' ${ref} ${reads} | samtools view -b > ${accession}.bam
+  """
+}
