@@ -13,3 +13,4 @@ dependencies:
  - htslib=1.9
  - unzip=6.0
  - tabix=0.2.6
+ - gnu-wget=1.18
