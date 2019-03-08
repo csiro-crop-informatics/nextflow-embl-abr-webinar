@@ -108,7 +108,7 @@ process trimmomatic_pe {
 		file(adapters) from adaptersSingletonChannel
 
 	output:
-	  file('*.gz') into trimmedReadsChannel
+	  set val(accession), file('*.gz') into (trimmedReadsChannel1, trimmedReadsChannel2)
 
 	// 	r1          = "qc_reads/{accession}_R1.fastq.gz",
 	// 	r2          = "qc_reads/{accession}_R2.fastq.gz",
@@ -131,6 +131,19 @@ process trimmomatic_pe {
 	"""
 }
 
+process fastqc_trimmed {
+  tag { accession }
+	input:
+		set val(accession), file('*') from trimmedReadsChannel2
+
+	output:
+		file('*') into fastqcTrimmedResultsChannel
+
+  script:
+   	"""
+		fastqc --threads ${task.cpus} *
+	  """
+}
 // // // rule fastqc_trimmed:
 // // // 	input:
 // // // 		"qc_reads/{prefix}.fastq.gz",
