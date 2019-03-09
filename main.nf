@@ -1,11 +1,21 @@
 #!/usr/bin/env nextflow
 
+//Build link to reference
 referenceLink = params.ref.base_url + params.ref.chr + ".fsa.zip"
-// reference = Channel.fromPath(params.ref.base_url + params.ref.chr + ".fsa.zip")
+
+//Take accessions defined in nextflow.config. Use --take N otherwise all are gobbled-up into the channel
 accessionsChannel = Channel.from(params.accessions).take( params.take == 'all' ? -1 : params.take )
+
+//fetch adapters file - either local or remote
+adaptersChannel = Channel.fromPath(params.adapters)
 
 process download_chromosome {
   tag { params.ref.chr }
+
+  //Prevent re-downloading of large files
+  storeDir { "${params.outdir}/downloaded" }  //use with care, caching will not work as normal so changes to input may not take effect
+  scratch false //must be false if storeDir used
+
   input:
     referenceLink
 
@@ -37,7 +47,7 @@ process bgzip_chromosome {
 
 process bgzip_chromosome_subregion {
   input:
-    file(chr) from chromosomesChannel
+    file chr from chromosomesChannel
 
   output:
     file('subregion') into subregionsChannel
@@ -57,7 +67,6 @@ process extract_reads {
 
   output:
     set val(accession), file('*.fastq.gz') into (extractedReadsChannel1, extractedReadsChannel2)
-    // set val(accession), file('*.fastq.gz') into (extractedReadsChannel1, extractedReadsChannel2)
     // ACBarrie.realigned.bam.bai, raw_reads/ACBarrie_R1.fastq.gz, raw_reads/ACBarrie_R2.fastq.gz
 
   script:
@@ -70,8 +79,6 @@ process extract_reads {
 }
 
 process fastqc_raw {
-  echo true
-  time 1.m
   tag { accession }
   input:
     set val(accession), file('*') from extractedReadsChannel1
@@ -81,10 +88,7 @@ process fastqc_raw {
 
   script:
   """
-  #ls -l
-  #echo
   fastqc  --quiet --threads ${task.cpus} *
-  #zcat * | head -4
   """
 }
 
@@ -101,21 +105,19 @@ process multiqc_raw {
   """
 }
 
-adaptersSingletonChannel = Channel.fromPath(params.adapters)
-
 process trimmomatic_pe {
+  echo true
   tag {accession}
 
   input:
-    set val(accession), file('*') from extractedReadsChannel2
-    file(adapters) from adaptersSingletonChannel
+    set file(adapters), val(accession), file('*') from adaptersChannel.combine(extractedReadsChannel2)
 
   output:
     set val(accession), file('*.paired.fastq.gz') into (trimmedReadsChannel1, trimmedReadsChannel2)
 
   script:
   """
-    trimmomatic PE \
+  trimmomatic PE \
     *.fastq.gz \
     ${accession}_R1.paired.fastq.gz \
     ${accession}_R1.unpaired.fastq.gz \
@@ -161,8 +163,7 @@ process bwa_index {
     file(ref) from subregionsChannel
 
   output:
-    set val(ref.name), file("*") into indexChannel
-    // set val("${ref}"), file("*") into indexChannel
+    set val(ref.name), file("*") into indexChannel //also valid: set val("${ref}"), file("*") into indexChannel
 
   script:
   """
