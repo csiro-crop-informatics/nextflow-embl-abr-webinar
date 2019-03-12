@@ -68,7 +68,7 @@ process extract_reads {
     //e.g. ACBarrie
 
   output:
-    set val(accession), file('*.fastq.gz') into (extractedReadsChannel1, extractedReadsChannel2)
+    set val(accession), file('*.fastq.gz') into (extractedReadsChannelA, extractedReadsChannelB)
     //e.g. ACBarrie.realigned.bam.bai, ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz
 
   script:
@@ -85,7 +85,7 @@ process fastqc_raw {
   tag { accession }
 
   input:
-    set val(accession), file('*') from extractedReadsChannel1
+    set val(accession), file('*') from extractedReadsChannelA
 
   output:
     file('*') into fastqcRawResultsChannel
@@ -114,10 +114,10 @@ process trimmomatic_pe {
   tag {accession}
 
   input:
-    set file(adapters), val(accession), file('*') from adaptersChannel.combine(extractedReadsChannel2)
+    set file(adapters), val(accession), file('*') from adaptersChannel.combine(extractedReadsChannelB)
 
   output:
-    set val(accession), file('*.paired.fastq.gz') into (trimmedReadsChannel1, trimmedReadsChannel2)
+    set val(accession), file('*.paired.fastq.gz') into (trimmedReadsChannelA, trimmedReadsChannelB)
 
   script:
   """
@@ -139,7 +139,7 @@ process fastqc_trimmed {
   tag { accession }
 
   input:
-    set val(accession), file('*') from trimmedReadsChannel2
+    set val(accession), file('*') from trimmedReadsChannelB
 
   output:
     file('*') into fastqcTrimmedResultsChannel
@@ -181,10 +181,10 @@ process bwa_mem {
   tag { accession }
 
   input:
-    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannel1)
+    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
 
 	output:
-		file('*.bam')
+		file('*.bam') into alignedReadsChannel
 
   script:
   """
