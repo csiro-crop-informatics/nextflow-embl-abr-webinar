@@ -3,7 +3,7 @@
 //Build link to reference
 referenceLink = params.ref.base_url + params.ref.chr + ".fsa.zip"
 
-//Take accessions defined in nextflow.config. Use --take N otherwise all are gobbled-up into the channel
+//Take accessions defined in nextflow.config. Use --take N to process first N accessions or --take all to process all
 accessionsChannel = Channel.from(params.accessions).take( params.take == 'all' ? -1 : params.take )
 
 //fetch adapters file - either local or remote
@@ -14,7 +14,7 @@ process download_chromosome {
 
   //Prevent re-downloading of large files
   storeDir { "${params.outdir}/downloaded" }  //use with care, caching will not work as normal so changes to input may not take effect
-  scratch false //must be false if storeDir used
+  scratch false //must be false otherwise storeDir ignored
 
   input:
     referenceLink
@@ -29,7 +29,7 @@ process download_chromosome {
 }
 
 process bgzip_chromosome {
-  cpus '4'
+  cpus '2' //consider defining in conf/requirements.config based on process name or label
   tag { ref }
   input:
     file ref from references
@@ -62,24 +62,28 @@ process bgzip_chromosome_subregion {
 
 process extract_reads {
   tag { accession }
+
   input:
     val accession from accessionsChannel
+    //e.g. ACBarrie
 
   output:
     set val(accession), file('*.fastq.gz') into (extractedReadsChannel1, extractedReadsChannel2)
-    // ACBarrie.realigned.bam.bai, raw_reads/ACBarrie_R1.fastq.gz, raw_reads/ACBarrie_R2.fastq.gz
+    //e.g. ACBarrie.realigned.bam.bai, ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz
 
   script:
   """
-  samtools view -hu "${params.bam.base_url}/chr4A_part2/${accession}.realigned.bam" ${params.bam.chr}:${params.bam.start}-${params.bam.end} \
+  samtools view -hu "${params.bam.base_url}/chr4A_part2/${accession}.realigned.bam" \
+    ${params.bam.chr}:${params.bam.start}-${params.bam.end} \
   | samtools collate -uO - \
-  | samtools fastq -F 0x900 -1 ${accession}_R1.fastq.gz -2 ${accession}_R2.fastq.gz -s /dev/null -0 /dev/null -
+  | samtools fastq -F 0x900 -1 ${accession}_R1.fastq.gz -2 ${accession}_R2.fastq.gz \
+    -s /dev/null -0 /dev/null -
   """
-
 }
 
 process fastqc_raw {
   tag { accession }
+
   input:
     set val(accession), file('*') from extractedReadsChannel1
 
@@ -133,6 +137,7 @@ process trimmomatic_pe {
 
 process fastqc_trimmed {
   tag { accession }
+
   input:
     set val(accession), file('*') from trimmedReadsChannel2
 
@@ -174,7 +179,8 @@ process bwa_index {
 
 process bwa_mem {
   tag { accession }
-	input:
+
+  input:
     set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannel1)
 
 	output:
