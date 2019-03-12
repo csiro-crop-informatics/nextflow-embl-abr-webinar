@@ -254,7 +254,7 @@ nextflow run hello -r 451ebd9
 nextflow run main.nf -with-dag mydag.png -with-docker
 ```
 
-* Double dash for pipeline params
+* Double dash for pipeline params (defined by you)
 ```{bash, eval=FALSE}
 nextflow run main.nf --input sample.fastq.gz
 ```
@@ -269,26 +269,63 @@ NXF_VER=19.01.0 nextflow run main.nf
 nextflow run main.nf -resume
 ```
 
+----
 
+## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
+
+<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async></script>
+
+[![asciicast](https://asciinema.org/a/233197.svg)](https://asciinema.org/a/233197)
+
+----
+
+## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
+
+
+```{bash, comment=''}
+nextflow run ../main.nf -profile docker -resume
+```
+
+----
+
+## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
+
+
+```{bash, echo = FALSE}
+dot -Tpng -Gsize=9,7\! -Gdpi=100 -ofigs/flowchart_small.png flowinfo/flowchart.dot
+```
+
+<div class="column-left">
+* Workflow logic is adapted from the recent EMBL-ABR [Snakemake webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar)
+* Credit: Nathan Watson-Haigh
+</div>
+
+<div class="column-right">
+![Flowchart](figs/flowchart_small.png)
+</div>
 
 ----
 
 ## The work directory (1/2)
 
-<div class="column-left">
+```{bash, comment=''}
+tree -L 2 work
+```
+
+<!-- <div class="column-left">
 ![Flowchart](figs/blast.png)
 </div>
 
-<div class="column-right">
+<div class="column-right"> -->
 
 
-```{bash, comment=''}
+<!-- ```{bash, comment=''}
 rm -rf work
 nextflow run blast-example -with-docker -with-dag figs/blast.png \
 && tree -L 2 work
-```
-
-</div>
+``` -->
+<!--
+</div> -->
 
 ----
 

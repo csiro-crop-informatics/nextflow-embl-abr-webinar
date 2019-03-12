@@ -3,7 +3,8 @@
 //Build link to reference
 referenceLink = params.ref.base_url + params.ref.chr + ".fsa.zip"
 
-//Take accessions defined in nextflow.config. Use --take N to process first N accessions or --take all to process all
+//Take accessions defined in nextflow.config.
+//Use --take N to process first N accessions or --take all to process all
 accessionsChannel = Channel.from(params.accessions).take( params.take == 'all' ? -1 : params.take )
 
 //fetch adapters file - either local or remote
