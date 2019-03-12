@@ -1,0 +1,468 @@
+---
+title: "Nextflow:"
+author:
+- Rad Suchecki
+subtitle: "Scalable, Sharable and Reproducible Computational Workflows across Clouds and Clusters"
+date: "<center> EMBL-ABR Nextflow webinar <br/> `r format(Sys.time(), '%A, %d %B, %Y')` </center>"
+# tags: [one, another]
+output:
+  #pdf_document:
+    #default
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: yeti
+    highlight: tango
+  beamer_presentation:
+    highlight: default #specifies the syntax highlighting style. Supported styles include “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock” (specify null to prevent syntax highlighting)
+    toc: true
+    slide_level: 2
+  revealjs::revealjs_presentation:
+    theme: solarized #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
+    highlight: pygments # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
+    center: false #specifies whether you want to vertically center content on slides (this defaults to false).
+    transition: slide #"default”, “fade”, “slide”, “convex”, “concave”, “zoom” or “none”.
+    incremental: false
+    css: reveal.css
+    slide_level: 1 #default=2
+    self_contained: true
+    reveal_options:
+      slideNumber: true
+      margin: 0.1
+      width: 1280
+      height: 800
+      preview_links: true
+  slidy_presentation:
+    font_adjustment: -1
+  ioslides_presentation:
+    widescreen: true
+    transition: faster
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+<div class="column-left">
+
+[![https://xkcd.com/242/](https://imgs.xkcd.com/comics/the_difference.png){ width=80% }](https://xkcd.com/242/)
+
+<small> [https://xkcd.com/242/](https://xkcd.com/242/) </small>
+</div>
+
+<div class="column-right" style="center">
+
+### Let others and your future self(!)
+
+* reliably re-run your analyses
+* trace back origins of results
+
+* We re-run pipelines due to
+  * new data (e.g. additional samples)
+  * updated software
+  * different compute environment (cloud?)
+  * errors found
+  * new ideas
+
+</div>
+
+
+----
+
+## The challenge
+
+* Large analysis workflows are fragile ecosystems of software tools, scripts and dependencies.
+* This complexity commonly makes these workflows not only irreproducible but sometimes even not re-runnable outside their original development environment.
+
+
+----
+
+## Workflows wish-list
+
+* version controlled
+* sharable
+* container-backed
+* seamless execution across different environments
+    * laptop (if computationally feasible)
+    * server
+    * cluster
+    * cloud
+
+<div class="column-right">
+<!--![](https://openclipart.org/download/192541/pushthebutton.svg){width=33%}-->
+![](figs/pushthebutton.svg){width=33%}
+</div>
+
+----
+
+### Choosing a workflow system
+
+* [~~214~~ 239 systems and counting](https://s.apache.org/existing-workflow-systems)
+  * from `make` to Galaxy
+  * see also [this list](https://github.com/pditommaso/awesome-pipeline)
+* Considerations
+  * active development?
+  * (community) support?
+  * flexibility and ease of development
+  * learning curve
+  * abstraction level
+
+
+----
+
+### Non-GUI, bioinformatics-flavoured and actively developed
+
+* Nextflow
+  * dataflow programming model
+  * conditional paths which may depend on intermediate results
+  * DAG not known in advance
+
+* Snakemake: *a pythonic workflow system* - covered in last [EMBL-ABR webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar)
+  * follows `make` philosophy
+  * rules and patterns that depend on input/output file names
+  * explicit, precomputed DAG
+
+* Comparisons
+  * 2018 [https://vatlab.github.io/blog/post/comparison/](https://vatlab.github.io/blog/post/comparison/) (by SoS authors)
+  * 2017 [https://www.nature.com/articles/nbt.3820/tables/1](https://www.nature.com/articles/nbt.3820/tables/1) (by NF authors)
+  * 2016 [https://jmazz.me/blog/NGS-Workflows](https://jmazz.me/blog/NGS-Workflows) (blog)
+  * 2016 [https://doi.org/10.1093/bib/bbw020](https://doi.org/10.1093/bib/bbw020) (review, not quite right about NF)
+
+----
+
+
+## [Nextflow](https://www.nextflow.io/)
+
+* Nextflow is a reactive workflow framework and a domain specific programming language.
+* Implicitly parallelized, asynchronous data streams
+* Domain specific language developed in Bioinformatics space
+* Separation of pipeline logic from layers defining
+  * software environment (on `$PATH`, modules, binaries, conda, containers)
+  * execution environment (laptop, server, HPC cluster, cloud)
+
+
+
+* Integration with git hosting services
+
+
+* Designed for
+  * specific use case: seamless scalability of existing tools and scripts
+  * for bioinformaticians familiar with programming
+
+### Features
+
+* Separation of pipeline logic from compute environment definition(s)
+* Syntax is a superset of Groovy, but **polyglot**
+  * easily mix scripting languages
+
+* Out-of-the-box support for
+  * SGE, LSF, **SLURM**, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, Amazon Cloud, AWS Batch, Google Cloud
+
+
+
+* Support for Conda/[Bioconda](https://bioconda.github.io/)
+
+
+
+<small>[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)</small>
+
+
+----
+
+## More about Nextflow
+
+### *Processes* (tasks) executed in separate work directories
+
+  * safe and lock-free parallelization
+  * easy clean-up, no issue of partial results following an error
+
+
+### *Channels*
+
+  * facilitate data flow between processes
+  * a suite of operators to shape the data flow
+
+----
+
+
+## Getting started
+
+### Required
+
+* POSIX compatible system (Linux, Solaris, OS X, etc)
+* Bash 2.3 (or later)
+* Java 8
+
+### Install
+
+```
+curl -s https://get.nextflow.io | bash
+```
+
+### Software you want to run
+
+* Available on PATH or under `bin/`
+* via Docker
+* via Singularity
+* via Conda
+* via Modules
+
+----
+
+## Hello ~~world~~ syntax
+
+```{bash, comment=''}
+curl -sL  https://raw.githubusercontent.com/nextflow-io/hello/master/main.nf
+```
+
+
+----
+
+## [Hello  ~~world~~ shared pipelines](https://www.nextflow.io/blog/2014/share-nextflow-pipelines-with-github.html)
+
+```{bash, comment=''}
+nextflow run hello
+```
+
+```{bash, comment=''}
+nextflow info hello
+```
+
+----
+
+## Run specific revision (tag/branch/commit SHA hash)
+
+```{bash, eval=FALSE}
+nextflow run hello -r v1.1
+```
+
+```{bash, eval=FALSE}
+nextflow run hello -r mybranch
+```
+
+```{bash, comment=''}
+nextflow run hello -r 451ebd9
+```
+
+----
+
+## Command line syntax basics
+
+* Single dash for Nextflow params
+```{bash, eval=FALSE}
+nextflow run main.nf -with-dag mydag.png -with-docker
+```
+
+* Double dash for pipeline params
+```{bash, eval=FALSE}
+nextflow run main.nf --input sample.fastq.gz
+```
+
+* Many params can also be set via [environmental variables](https://www.nextflow.io/docs/latest/config.html#environment-variables)
+```{bash, eval=FALSE}
+NXF_VER=19.01.0 nextflow run main.nf
+```
+
+* Resuming - note the single dash(!)
+```{bash, eval=FALSE}
+nextflow run main.nf -resume
+```
+
+
+
+----
+
+## The work directory (1/2)
+
+<div class="column-left">
+![Flowchart](figs/blast.png)
+</div>
+
+<div class="column-right">
+
+
+```{bash, comment=''}
+rm -rf work
+nextflow run blast-example -with-docker -with-dag figs/blast.png \
+&& tree -L 2 work
+```
+
+</div>
+
+----
+
+## The work directory (2/2)
+
+
+```{bash, comment='', cache=FALSE}
+tree -ah work
+```
+
+
+----
+
+### Recall: separation of workflow logic from compute, software envs
+
+* Much about software, execution environments _can_ be defined in the *directive* declarations block at the top of the process body e.g.
+
+```{bash, comment='', , eval=FALSE}
+process extract_reads {
+  executor 'slurm'
+  module 'samtools/1.9'
+  ...
+```
+
+* Usually preferred to define these in [`nextflow.config`](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/blob/master/nextflow.config) *et al.*
+
+```{bash, comment='', cache=FALSE, echo=FALSE}
+curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/nextflow.config
+```
+
+----
+
+## [Configuration file(s)](https://www.nextflow.io/docs/latest/config.html)
+
+* `nextflow.config`
+* `$HOME/.nextflow/config`
+* But also
+  * Include multiple config files via [`includeConfig another.config`](https://www.nextflow.io/docs/latest/config.html#config-include)
+  * Extend config by passing additional file at run time `-c additional.config`
+  * Ignore default and use custom config file passed at run time `-C custom.config`
+
+* [Config scopes](https://www.nextflow.io/docs/latest/config.html#config-scopes) e.g. `env`, `params`, `process`, `docker`...
+* [Config profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles)
+
+----
+
+## Configuration profiles
+
+
+```{bash, eval = FALSE}
+#Local/server
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile conda
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile docker
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile singularity
+
+#HPC
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm,singularity,singularitymodule
+
+#Cloud
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch -work-dir s3://your_s3_bucket/work --outdir s3://your_s3_bucket/results
+```
+
+----
+
+## Software environment (Conda)
+
+* Conda environment defined for this tutorial
+
+```{bash, comment='', cache=FALSE, echo=FALSE}
+curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/conda.yaml
+```
+
+----
+
+## Software environment (Docker)
+
+* Dockerfile
+
+```{bash, comment='', cache=FALSE, echo=FALSE}
+curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Dockerfile
+```
+
+----
+
+## Software environment (Singularity)
+
+* Singularity recipe
+
+```{bash, comment='', cache=FALSE, echo=FALSE}
+curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Singularity
+```
+
+----
+
+## Configuration files
+
+* Required containers are defined separately for each process (`withName`) or for multiple processes (`withLabel`)
+* Available on docker hub
+  * Used both by `docker` and `singularity`
+
+```{bash, comment='', cache=FALSE}
+curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/reproducible_poc/develop/conf/containers.config
+```
+----
+
+### Workflow introspection
+
+* Nextflow offers detailed
+  * execution [reports](https://rsuchecki.github.io/reproducible/report.html)
+  * execution [timelines](https://rsuchecki.github.io/reproducible/timeline.html)
+
+### NF Resources
+
+*
+* [https://www.nextflow.io/](https://www.nextflow.io/)
+* [https://github.com/nextflow-io/patterns](https://github.com/nextflow-io/patterns)
+
+* [https://github.com/nextflow-io/awesome-nextflow](https://github.com/nextflow-io/awesome-nextflow)
+
+* [http://nf-co.re/](http://nf-co.re/)
+
+----
+
+## According to Nextflow authors
+
+* *The dataflow model is superior to alternative solutions based on a Make-like approach, such as Snakemake, in which computation involves the pre-estimation of all computational dependencies, starting from the expected results up until the input raw data. A Make-like procedure requires a directed acyclic graph (DAG), whose storage requirement is a limiting factor for very large computations. In contrast, as the top to bottom processing model used by Nextflow follows the natural flow of data analysis, it does not require a DAG. Instead, the graph it traverses is merely incidental and does not need to be pre-computed or even stored, thereby ensuring high scalability.*
+
+
+<!--Collected and abbreviated from [here](https://groups.google.com/forum/#!topic/nextflow/Kg_0jv4SS_Q)-->
+
+<!--Individual work directories are core to how NextFlow works and come with several benefits, reproducibility, makes debugging easier, facilitates simple integration into containers and allows separation of workflow steps to avoid unintended consequences. It must also be noted this mechanism enable to parallelise the tasks in a safe and lock-free manner and to resume the pipeline execution seamlessly, in a consistent manner ie. without retained partial outputs following an unexpected error.-->
+
+<!--The NF work directory is not meant to hold the pipeline outputs, but the pipeline intermediate results, which can/should be removed once your workflow has been successfully executed. -->
+
+<!--Pipeline outputs are meant to be managed (and structured) by using the publishDir definition. -->
+
+<!--NF is not a general purpose software. It's a framework designed for a very specify use case ie. to enable seamless scalability and parallelisation of existing tools and scripts. It's based on functional/reactive model that's uncommon to other frameworks and it may require a bit of time to get used to it and to see its befits.-->
+
+<!--Said that, the `storeDir` allows users to store data on a directory of their choice, but it comes with some caveats and it should not to be considered as alternative to the NF default directory structure mechanism. -->
+
+<!--NF allows you to compose one or more commands by using template files as you are correctly referring. A template is simple text file which can contain NF variables which allows you to parametrise it and it can be used in different processes. However you will still need to declare the process definition in your script. -->
+
+<!--Inclusion of a NF script into other NF script it's not supported at this time, but it's an open effort. However it's still possibile to invoke a NF pipeline from a NF process like any other command.-->
+
+<!--The dataflow model is superior to alternative solutions based on a Make-like approach, such as Snakemake, in which computation involves the pre-estimation of all computational dependencies, starting from the expected results up until the input raw data. A Make-like procedure requires a directed acyclic graph (DAG), whose storage requirement is a limiting factor for very large computations. In contrast, as the top to bottom processing model used by Nextflow follows the natural flow of data analysis, it does not require a DAG. Instead, the graph it traverses is merely incidental and does not need to be pre-computed or even stored, thereby ensuring high scalability.-->
+
+<!--The use of communication channels between tasks also contributes to computational flexibility and robustness in Nextflow. For example, in Snakemake, the task execution sequence is defined by rules and patterns that depend on input/output file names. These dependencies make it difficult to handle multiple dynamically generated output files, and often require the implementation of low-level output management procedures to deal with a pipeline's individual stages. Nextflow can use any data structure and outputs are not limited to files but can also include in-memory values and data objects.-->
+
+<!--Nextflow is designed specifically for bioinformaticians familiar with programming. This sets it apart from Galaxy18, which addresses the numerical stability issue with a custom package manager called Tool Shed. Although the graphical user interface (GUI) in Galaxy offers powerful support for de novo pipeline implementation by non-specialists, it also imposes a heavy development burden because any existing and validated third-party pipeline must be re-implemented and re-parameterized using the GUI. This can be very demanding in the case of elaborate pipelines, such as the Sanger Companion pipeline, which is made with a complex combination of tools. Similar reimplementation requirements also apply to other tools, including Toil.-->
+
+----
+
+# This slide is intentionally left blank
+
+----
+
+
+
+
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+<script>
+function highlightCode() {
+    var pres = document.querySelectorAll("pre>code");
+    for (var i = 0; i < pres.length; i++) {
+        hljs.highlightBlock(pres[i]);
+    }
+}
+highlightCode();
+</script>
+
+
+

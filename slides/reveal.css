@@ -1,0 +1,61 @@
+<style type="text/css">
+  .reveal p {
+    text-align: left;
+  }
+  .reveal ul {
+    display: block;
+  }
+  .reveal ol {
+    display: block;
+  }
+  .reveal h3 {
+    padding-top:20px;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .pull-left {
+   float: left;
+   width: 47%;
+}
+.pull-right {
+   float: right;
+   width: 47%;
+}
+.column-left{
+  float: left;
+  width: 33%;
+  text-align: center;
+}
+.column-right{
+  float: right;
+  width: 66%;
+  text-align: center;
+}
+.column-farright{
+  float: right;
+  width: 33%;
+  text-align: center;
+}
+.ccenter{
+  float: center;
+  width: 66%;
+  text-align: center;
+}
+/*.reveal section p {*/
+/*    font-weight: bold !important;*/
+/*    font-size: 0.7em !important;*/
+/*}*/
+.reveal pre {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+.reveal section pre code {
+/*    padding: 1px !important;*/
+    font-size: 0.9em;
+    line-height: 1;
+}
+/*.reveal code {*/
+/*  font-size: .75em;*/
+/*  line-height .8em*/
+/*}*/
+</style>
