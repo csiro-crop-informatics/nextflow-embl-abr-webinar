@@ -273,9 +273,11 @@ nextflow run main.nf -resume
 
 ## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
 
-<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async></script>
+<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="true" data-loop="true" data-size="medium">
 
-[![asciicast](https://asciinema.org/a/233197.svg)](https://asciinema.org/a/233197)
+</script>
+
+<!-- data-cols="200" data-rows="50"  -->
 
 ----
 
