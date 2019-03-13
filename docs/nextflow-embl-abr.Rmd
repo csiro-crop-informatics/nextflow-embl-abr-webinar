@@ -375,7 +375,7 @@ cat ../main.nf
 Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233197](https://asciinema.org/a/233197)
 </small>
 
-<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium">
+<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="false" data-size="medium" data-rows="40">
 
 </script>
 
@@ -400,7 +400,7 @@ nextflow run ../main.nf -profile docker -resume
 
 ## The work directory (1/2)
 
-```{bash, comment=''}
+```{bash, comment='', cache=FALSE}
 tree -L 2 work
 ```
 
@@ -428,7 +428,7 @@ tree -ah work
   * Ignore default and use custom config file passed at run time `-C custom.config`
 
 * [Config scopes](https://www.nextflow.io/docs/latest/config.html#config-scopes) e.g. `env`, `params`, `process`, `docker`...
-* [Config profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles)
+* [Config profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles) (!)
 
 ----
 
@@ -475,10 +475,8 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch 
 * Global software env for the workflow
 * Separate software envs for individual processes or subsets
 * A bit of both
-
-<br />
-
-Example workflow: global Conda env -> Docker -> Singularity
+* For the example workflow we have
+  * global Conda env -> Docker -> Singularity
 
 ----
 
@@ -524,7 +522,7 @@ profiles {
 
 ## Software environment (Docker)
 
-* (Automated) build on [Docker Hub ![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+* Container image (automated build) on [Docker Hub ![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
 * Need not be conda-based
 * Dockerfile
 
@@ -542,8 +540,8 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
     }
   }
 ```
-* Pipeline pulls the container image from Docker Hub when run with
-```-profile docker```
+* NF pulls the container image from Docker Hub when our pipeline is run with
+`-profile docker` (or `-profile awsbatch`)
 
 
 ----
@@ -573,7 +571,7 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
     }
   }
 ```
-* Pipeline pulls the container image from Singularity Hub when run with
+* NF pulls the container image from Singularity Hub when our pipeline is run with
 ```-profile singularity```
 
 ----
@@ -607,7 +605,7 @@ tree -L 2 results
 Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233421](https://asciinema.org/a/233421)
 </small>
 
-<script id="asciicast-233421" src="https://asciinema.org/a/233421.js" async data-speed="1" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium" >
+<script id="asciicast-233421" src="https://asciinema.org/a/233421.js" async data-speed="1" data-theme="tango" data-autoplay="false" data-loop="false" data-size="small" data-rows="40" data-cols="160">
 </script>
 
 
@@ -621,14 +619,18 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 ### Workflow introspection
 
 * Nextflow offers detailed
-  * execution reports [(example AWS Batch run)](https://csiro-crop-informatics.github.io/nextflow-embl-abr-webinar/report.html)
-  * execution timelines [(example local run)](https://csiro-crop-informatics.github.io/nextflow-embl-abr-webinar/timeline.html)
+  * execution reports
+    * [example AWS Batch run](https://csiro-crop-informatics.github.io/nextflow-embl-abr-webinar/report.html)
+  * execution timelines
+    * [example AWS Batch run](https://csiro-crop-informatics.github.io/nextflow-embl-abr-webinar/timeline_aws.html)
+    * [example local run](https://csiro-crop-informatics.github.io/nextflow-embl-abr-webinar/timeline.html)
 
 ### NF Resources
 
 
 * [https://www.nextflow.io/](https://www.nextflow.io/)
 * [https://github.com/nextflow-io/patterns](https://github.com/nextflow-io/patterns)
+* [Nextflow Gitter](https://gitter.im/nextflow-io/nextflow)
 * [https://github.com/nextflow-io/awesome-nextflow](https://github.com/nextflow-io/awesome-nextflow)
 * [http://nf-co.re/](http://nf-co.re/) - check it out before implementing something
 
@@ -639,21 +641,24 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 
 `NXF_VER=19.02.0-edge ` -->
 
-<!--
+
 
 ----
 
 ### Acknowledgments
 
-#### Nextflow dev team
-
-Paolo Di Tommaso [@PaoloDiTommaso](https://twitter.com/paoloditommaso?lang=en), Evan Floden [@EvanFloden](https://twitter.com/EvanFloden) *et al.*
-
-#### Nextflow community on [Gitter](https://gitter.im/nextflow-io/nextflow)
-
-####
-
--->
+* Nextflow dev team
+  * Paolo Di Tommaso [\@PaoloDiTommaso](https://twitter.com/paoloditommaso?lang=en)
+  * Evan Floden [\@EvanFloden](https://twitter.com/EvanFloden)
+  * *et al.*
+* Nextflow community on [Gitter](https://gitter.im/nextflow-io/nextflow)
+* University of Adelaide
+  * Nathan Watson-Haigh [\@watsonhaigh](https://twitter.com/watsonhaigh)
+* CSIRO
+  * Alex Whan [\@alexwhan](https://twitter.com/alexwhan)
+  * Jen Taylor [\@JenMTaylor](https://twitter.com/JenMTaylor)
+  * Ondrej Hlinka (HPC)
+  * *et al.*
 
 
 
