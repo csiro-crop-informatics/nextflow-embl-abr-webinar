@@ -16,6 +16,6 @@
 
 For the purpose of demonstrating a Nextflow workflow in reasonable time, we will use the dataset used in [this Snakemake webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar#data-for-the-webinar).
 
-# Step-by-step tutorial
+# Tutorial
 
 [nextflow-tutorial.md](nextflow-tutorial.md)

@@ -428,7 +428,7 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile docker
 nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile singularity
 
 #HPC
-nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm,conda #not tested
 nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm,singularity,singularitymodule
 
 #Cloud
@@ -450,8 +450,10 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch 
 
 <div class="column-left">
 
-* can be used directly or to build a container
-* can be slow...
+* can be
+  * used directly
+  * to build a container
+  * slow...
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Conda fail: the infinite &quot;solving environment&quot; wheel of death.<br><br>I just downloaded the software and built from source.  It was much faster.<a href="https://twitter.com/hashtag/conda?src=hash&amp;ref_src=twsrc%5Etfw">#conda</a> <a href="https://twitter.com/hashtag/bioconda?src=hash&amp;ref_src=twsrc%5Etfw">#bioconda</a> <a href="https://twitter.com/hashtag/wheelofdeath?src=hash&amp;ref_src=twsrc%5Etfw">#wheelofdeath</a></p>&mdash; Nils Homer (@nilshomer) <a href="https://twitter.com/nilshomer/status/1093380228833980416?ref_src=twsrc%5Etfw">February 7, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8">
@@ -461,7 +463,8 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch 
 
 <div class="column-right">
 
-### Conda environment defined for this tutorial
+* Conda environment defined for this tutorial
+  * [`conf/conda.yaml`](https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/conda.yaml)
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
 curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/conda.yaml
@@ -474,11 +477,12 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
 
 ## Software environment (Docker)
 
-* Automated build on Docker Hub
+* (Automated) build on [Docker Hub ![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
 * Pipeline pulls the container image when run with
   * `-profile docker`  (if defined)
   * `-with-docker`
 * Need not be conda-based
+
 
 ### Dockerfile
 
@@ -491,8 +495,10 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
 ## Software environment (Singularity)
 
 * Singularity *can* pull from Docker Hub and convert to its format
-* Dedicated build on Singularity Hub ensures the same image is used (reproducibility!)
+* Dedicated build on [Singularity Hub ![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
+  * ensures the same image is used (reproducibility!)
 * Need not be Docker based
+* Build automation less flexible than on Docker Hub
 
 ### Singularity recipe
 
@@ -530,11 +536,21 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/reproducible_p
 
 * [http://nf-co.re/](http://nf-co.re/)
 
-----
+<!-- ----
 
-## According to Nextflow authors
+### Acknowledgments
 
-* *The dataflow model is superior to alternative solutions based on a Make-like approach, such as Snakemake, in which computation involves the pre-estimation of all computational dependencies, starting from the expected results up until the input raw data. A Make-like procedure requires a directed acyclic graph (DAG), whose storage requirement is a limiting factor for very large computations. In contrast, as the top to bottom processing model used by Nextflow follows the natural flow of data analysis, it does not require a DAG. Instead, the graph it traverses is merely incidental and does not need to be pre-computed or even stored, thereby ensuring high scalability.*
+#### Nextflow dev team
+
+Paolo Di Tommaso [@PaoloDiTommaso](https://twitter.com/paoloditommaso?lang=en), Evan Floden [@EvanFloden](https://twitter.com/EvanFloden) *et al.*
+
+#### Nextflow community on [Gitter](https://gitter.im/nextflow-io/nextflow)
+
+####  -->
+
+<!-- ## According to Nextflow authors
+
+* *The dataflow model is superior to alternative solutions based on a Make-like approach, such as Snakemake, in which computation involves the pre-estimation of all computational dependencies, starting from the expected results up until the input raw data. A Make-like procedure requires a directed acyclic graph (DAG), whose storage requirement is a limiting factor for very large computations. In contrast, as the top to bottom processing model used by Nextflow follows the natural flow of data analysis, it does not require a DAG. Instead, the graph it traverses is merely incidental and does not need to be pre-computed or even stored, thereby ensuring high scalability.* -->
 
 
 <!--Collected and abbreviated from [here](https://groups.google.com/forum/#!topic/nextflow/Kg_0jv4SS_Q)-->
