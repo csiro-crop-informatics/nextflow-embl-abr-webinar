@@ -1,5 +1,5 @@
 ---
-title: "Nextflow:"
+title: "Nextflow"
 author:
 - Rad Suchecki (CSIRO)
 subtitle: "Scalable, Sharable and Reproducible Computational Workflows across Clouds and Clusters"
@@ -131,7 +131,6 @@ knitr::opts_chunk$set(cache=TRUE)
 
 * [~~214~~ 239 systems and counting](https://s.apache.org/existing-workflow-systems)
   * from `make` to Galaxy
-  * see also [this list](https://github.com/pditommaso/awesome-pipeline)
 * Additional considerations
   * active development?
   * (community) support?
@@ -141,18 +140,10 @@ knitr::opts_chunk$set(cache=TRUE)
 
 ----
 
-![](figs/floden1.png){width=80%}
-
-<small>
-Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-introduction-to-nextflow?slide=15)
-</small>
-
-----
-
-
 ## [Nextflow](https://www.nextflow.io/)
 
-* A reactive workflow framework and a domain specific programming language.
+* Reactive workflow framework
+* Domain specific programming language
 
 <br/>
 
@@ -162,6 +153,16 @@ Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-int
 <small>
 [https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
 </small>
+
+
+----
+
+![](figs/floden1.png){width=80%}
+
+<small>
+Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-introduction-to-nextflow?slide=15)
+</small>
+
 
 ----
 
@@ -174,7 +175,7 @@ Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-int
   * software environment (on `$PATH`, modules, binaries, conda, containers)
   * execution environment (laptop, server, HPC cluster, cloud)
 * Out-of-the-box support for
-  * SGE, LSF, **SLURM**, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, Amazon Cloud, AWS Batch, Google Cloud
+  * SGE, LSF, **SLURM**, PBS/Torque, NQSII HTCondor, **Ignite**, Kubernets, **Amazon Cloud**, **AWS Batch**, Google Cloud
 * Integration with git hosting services
 
 <small>
@@ -368,10 +369,17 @@ cat ../main.nf
 
 ----
 
-## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar) run
+## [Example workflow run](https://asciinema.org/a/233197)
 
 <script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium">
+
 </script>
+
+<small>
+Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233197](https://asciinema.org/a/233197)
+</small>
+
+<!-- [![asciicast](https://asciinema.org/a/233197.svg)](https://asciinema.org/a/233197) -->
 
 <!-- data-cols="200" data-rows="50"  -->
 
@@ -592,11 +600,14 @@ tree -L 2 results
 
 ----
 
-## AWS Batch execution
+## [AWS Batch execution](https://asciinema.org/a/233421)
 
-<script id="asciicast-233421" src="https://asciinema.org/a/233421.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium" >
+<script id="asciicast-233421" src="https://asciinema.org/a/233421.js" async data-speed="1" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium" >
 </script>
 
+<!-- <small>
+Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233421](https://asciinema.org/a/233421)
+</small> -->
 <!-- [![asciicast](https://asciinema.org/a/233421.svg)](https://asciinema.org/a/233421) -->
 
 <!-- data-cols="200" data-rows="50"  -->
