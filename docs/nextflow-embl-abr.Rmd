@@ -536,7 +536,9 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/reproducible_p
 
 * [http://nf-co.re/](http://nf-co.re/)
 
-<!-- ----
+<!--
+
+----
 
 ### Acknowledgments
 
@@ -546,34 +548,10 @@ Paolo Di Tommaso [@PaoloDiTommaso](https://twitter.com/paoloditommaso?lang=en), 
 
 #### Nextflow community on [Gitter](https://gitter.im/nextflow-io/nextflow)
 
-####  -->
+####
 
-<!-- ## According to Nextflow authors
+-->
 
-* *The dataflow model is superior to alternative solutions based on a Make-like approach, such as Snakemake, in which computation involves the pre-estimation of all computational dependencies, starting from the expected results up until the input raw data. A Make-like procedure requires a directed acyclic graph (DAG), whose storage requirement is a limiting factor for very large computations. In contrast, as the top to bottom processing model used by Nextflow follows the natural flow of data analysis, it does not require a DAG. Instead, the graph it traverses is merely incidental and does not need to be pre-computed or even stored, thereby ensuring high scalability.* -->
-
-
-<!--Collected and abbreviated from [here](https://groups.google.com/forum/#!topic/nextflow/Kg_0jv4SS_Q)-->
-
-<!--Individual work directories are core to how NextFlow works and come with several benefits, reproducibility, makes debugging easier, facilitates simple integration into containers and allows separation of workflow steps to avoid unintended consequences. It must also be noted this mechanism enable to parallelise the tasks in a safe and lock-free manner and to resume the pipeline execution seamlessly, in a consistent manner ie. without retained partial outputs following an unexpected error.-->
-
-<!--The NF work directory is not meant to hold the pipeline outputs, but the pipeline intermediate results, which can/should be removed once your workflow has been successfully executed. -->
-
-<!--Pipeline outputs are meant to be managed (and structured) by using the publishDir definition. -->
-
-<!--NF is not a general purpose software. It's a framework designed for a very specify use case ie. to enable seamless scalability and parallelisation of existing tools and scripts. It's based on functional/reactive model that's uncommon to other frameworks and it may require a bit of time to get used to it and to see its befits.-->
-
-<!--Said that, the `storeDir` allows users to store data on a directory of their choice, but it comes with some caveats and it should not to be considered as alternative to the NF default directory structure mechanism. -->
-
-<!--NF allows you to compose one or more commands by using template files as you are correctly referring. A template is simple text file which can contain NF variables which allows you to parametrise it and it can be used in different processes. However you will still need to declare the process definition in your script. -->
-
-<!--Inclusion of a NF script into other NF script it's not supported at this time, but it's an open effort. However it's still possibile to invoke a NF pipeline from a NF process like any other command.-->
-
-<!--The dataflow model is superior to alternative solutions based on a Make-like approach, such as Snakemake, in which computation involves the pre-estimation of all computational dependencies, starting from the expected results up until the input raw data. A Make-like procedure requires a directed acyclic graph (DAG), whose storage requirement is a limiting factor for very large computations. In contrast, as the top to bottom processing model used by Nextflow follows the natural flow of data analysis, it does not require a DAG. Instead, the graph it traverses is merely incidental and does not need to be pre-computed or even stored, thereby ensuring high scalability.-->
-
-<!--The use of communication channels between tasks also contributes to computational flexibility and robustness in Nextflow. For example, in Snakemake, the task execution sequence is defined by rules and patterns that depend on input/output file names. These dependencies make it difficult to handle multiple dynamically generated output files, and often require the implementation of low-level output management procedures to deal with a pipeline's individual stages. Nextflow can use any data structure and outputs are not limited to files but can also include in-memory values and data objects.-->
-
-<!--Nextflow is designed specifically for bioinformaticians familiar with programming. This sets it apart from Galaxy18, which addresses the numerical stability issue with a custom package manager called Tool Shed. Although the graphical user interface (GUI) in Galaxy offers powerful support for de novo pipeline implementation by non-specialists, it also imposes a heavy development burden because any existing and validated third-party pipeline must be re-implemented and re-parameterized using the GUI. This can be very demanding in the case of elaborate pipelines, such as the Sanger Companion pipeline, which is made with a complex combination of tools. Similar reimplementation requirements also apply to other tools, including Toil.-->
 
 ----
 
