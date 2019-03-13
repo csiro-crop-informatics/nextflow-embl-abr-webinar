@@ -371,13 +371,14 @@ cat ../main.nf
 
 ## [Example workflow run](https://asciinema.org/a/233197)
 
+<small>
+Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233197](https://asciinema.org/a/233197)
+</small>
+
 <script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium">
 
 </script>
 
-<small>
-Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233197](https://asciinema.org/a/233197)
-</small>
 
 <!-- [![asciicast](https://asciinema.org/a/233197.svg)](https://asciinema.org/a/233197) -->
 
@@ -602,12 +603,14 @@ tree -L 2 results
 
 ## [AWS Batch execution](https://asciinema.org/a/233421)
 
+<small>
+Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233421](https://asciinema.org/a/233421)
+</small>
+
 <script id="asciicast-233421" src="https://asciinema.org/a/233421.js" async data-speed="1" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium" >
 </script>
 
-<!-- <small>
-Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233421](https://asciinema.org/a/233421)
-</small> -->
+
 <!-- [![asciicast](https://asciinema.org/a/233421.svg)](https://asciinema.org/a/233421) -->
 
 <!-- data-cols="200" data-rows="50"  -->
