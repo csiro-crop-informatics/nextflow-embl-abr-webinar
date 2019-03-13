@@ -133,9 +133,11 @@ knitr::opts_chunk$set(cache=TRUE)
 ----
 
 ![](figs/floden1.png){width=80%}
+
 <small>
-Credit: [Evan FLoden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-introduction-to-nextflow)
+Credit: [Evan FLoden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-introduction-to-nextflow?slide=15)
 </small>
+
 ----
 
 
@@ -222,9 +224,10 @@ curl -s https://get.nextflow.io | bash
 
 ## Hello world syntax
 
-```{bash, comment='', echo = FALSE}
+```{bash, comment='', echo = TRUE}
 curl -sL  https://raw.githubusercontent.com/nextflow-io/hello/master/main.nf
 ```
+
 
 
 ----
@@ -240,14 +243,21 @@ nextflow run hello
 nextflow info hello
 ```
 
+
+```{bash, eval=FALSE}
+nextflow run main.nf #local exec
+```
+
+
 ----
 
 ## [Hello  ~~world~~ shared pipelines](https://www.nextflow.io/blog/2014/share-nextflow-pipelines-with-github.html)
 
-* Run specific revision (tag/branch/commit SHA hash)
+* Run specific revision (commit SHA hash, branch or tag)
+
 
 ```{bash, eval=FALSE}
-nextflow run hello -r v1.1
+nextflow run hello -r 451ebd9
 ```
 
 ```{bash, eval=FALSE}
@@ -255,8 +265,10 @@ nextflow run hello -r mybranch
 ```
 
 ```{bash, comment=''}
-nextflow run hello -r 451ebd9
+nextflow run hello -r v1.1
 ```
+
+
 
 ----
 
@@ -306,9 +318,10 @@ dot -Tpng -Gsize=9,7\! -Gdpi=100 -ofigs/flowchart_small.png flowinfo/flowchart.d
 ## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
 
 
-```{bash, comment=''}
-nextflow run ../main.nf -profile docker -resume
+```{bash, comment='', echo = FALSE}
+cat ../main.nf
 ```
+
 
 
 ----
@@ -321,6 +334,15 @@ nextflow run ../main.nf -profile docker -resume
 <!-- data-cols="200" data-rows="50"  -->
 
 
+----
+
+## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
+
+
+```{bash, comment=''}
+nextflow run ../main.nf -profile docker -resume
+```
+
 
 
 ----
@@ -330,21 +352,6 @@ nextflow run ../main.nf -profile docker -resume
 ```{bash, comment=''}
 tree -L 2 work
 ```
-
-<!-- <div class="column-left">
-![Flowchart](figs/blast.png)
-</div>
-
-<div class="column-right"> -->
-
-
-<!-- ```{bash, comment=''}
-rm -rf work
-nextflow run blast-example -with-docker -with-dag figs/blast.png \
-&& tree -L 2 work
-``` -->
-<!--
-</div> -->
 
 ----
 
@@ -415,7 +422,8 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch 
 * Separate software envs for individual processes or subsets
 * A bit of both
 
-### Example workflow: global Conda env -> Docker -> Singularity
+### Example workflow:
+global Conda env -> Docker -> Singularity
 
 ----
 
@@ -451,17 +459,17 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
 ## Software environment (Docker)
 
 * (Automated) build on [Docker Hub ![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
-* Pipeline pulls the container image when run with
-  * `-profile docker`  (if defined)
-  * `-with-docker`
 * Need not be conda-based
-
 
 ### Dockerfile
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
 curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Dockerfile
 ```
+
+* Pipeline pulls the container image from Docker Hub when run with
+  * `-profile docker`  (if defined)
+  * `-with-docker`
 
 ----
 
@@ -478,6 +486,28 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
 ```{bash, comment='', cache=FALSE, echo=FALSE}
 curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Singularity
 ```
+
+----
+
+### Pipeline outputs
+
+* `publishDir` directive to define end products of a pipeline and meke these easily accessible.
+
+
+```{bash, comment='', cache=FALSE}
+curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/publish.config
+```
+
+----
+
+### Pipeline outputs
+
+
+```{bash, comment='', cache=FALSE}
+tree -L 2 results
+```
+
+
 
 
 ----
