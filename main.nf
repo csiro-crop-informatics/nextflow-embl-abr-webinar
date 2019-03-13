@@ -99,7 +99,6 @@ process fastqc_raw {
 }
 
 process multiqc_raw {
-  label 'qc'
   input:
     file('*') from fastqcRawResultsChannel.collect()
 
@@ -154,8 +153,6 @@ process fastqc_trimmed {
 }
 
 process multiqc_trimmed {
-  label 'qc'
-
   input:
     file('*') from fastqcTrimmedResultsChannel.collect()
 
