@@ -32,6 +32,7 @@ process download_chromosome {
 process bgzip_chromosome {
   cpus '2' //consider defining in conf/requirements.config based on process name or label
   tag { ref }
+
   input:
     file ref from references
 
@@ -98,6 +99,7 @@ process fastqc_raw {
 }
 
 process multiqc_raw {
+  label 'qc'
   input:
     file('*') from fastqcRawResultsChannel.collect()
 
@@ -152,6 +154,8 @@ process fastqc_trimmed {
 }
 
 process multiqc_trimmed {
+  label 'qc'
+
   input:
     file('*') from fastqcTrimmedResultsChannel.collect()
 
