@@ -647,6 +647,7 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 
 ### Acknowledgments
 
+
 * Nextflow dev team
   * Paolo Di Tommaso [\@PaoloDiTommaso](https://twitter.com/paoloditommaso?lang=en)
   * Evan Floden [\@EvanFloden](https://twitter.com/EvanFloden)
@@ -660,6 +661,8 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
   * Ondrej Hlinka (HPC)
   * *et al.*
 
+
+[![Twitter Follow](https://img.shields.io/twitter/follow/bioinforad.svg?style=social)](https://twitter.com/bioinforad)
 
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">

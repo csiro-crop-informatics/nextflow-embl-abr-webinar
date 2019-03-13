@@ -9,7 +9,7 @@
 
 **Presenter:** [Rad Suchecki](https://orcid.org/0000-0003-4992-9497), CSIRO
 
-![Twitter Follow](https://img.shields.io/twitter/follow/bioinforad.svg?style=social)
+[![Twitter Follow](https://img.shields.io/twitter/follow/bioinforad.svg?style=social)](https://twitter.com/bioinforad)
 
 **Registration:** https://attendee.gotowebinar.com/register/8408436403729692931)
 
