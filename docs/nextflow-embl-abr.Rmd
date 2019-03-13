@@ -133,13 +133,15 @@ knitr::opts_chunk$set(cache=TRUE)
 ----
 
 ![](figs/floden1.png){width=80%}
-
+<small>
+Credit: [Evan FLoden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-introduction-to-nextflow)
+</small>
 ----
 
 
 ## [Nextflow](https://www.nextflow.io/)
 
-### A reactive workflow framework and a domain specific programming language.
+* A reactive workflow framework and a domain specific programming language.
 
 ### Designed for
 * specific use case: seamless scalability of existing tools and scripts
@@ -480,17 +482,6 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
 
 ----
 
-## Configuration files
-
-* Required containers are defined separately for each process (`withName`) or for multiple processes (`withLabel`)
-* Available on docker hub
-  * Used both by `docker` and `singularity`
-
-```{bash, comment='', cache=FALSE}
-curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/reproducible_poc/develop/conf/containers.config
-```
-----
-
 ### Workflow introspection
 
 * Nextflow offers detailed
@@ -499,13 +490,13 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/reproducible_p
 
 ### NF Resources
 
-*
+
 * [https://www.nextflow.io/](https://www.nextflow.io/)
 * [https://github.com/nextflow-io/patterns](https://github.com/nextflow-io/patterns)
 
 * [https://github.com/nextflow-io/awesome-nextflow](https://github.com/nextflow-io/awesome-nextflow)
 
-* [http://nf-co.re/](http://nf-co.re/)
+* [http://nf-co.re/](http://nf-co.re/) - check it out before implementing something
 
 <!--
 
@@ -522,16 +513,6 @@ Paolo Di Tommaso [@PaoloDiTommaso](https://twitter.com/paoloditommaso?lang=en), 
 ####
 
 -->
-
-
-----
-
-# This slide is intentionally left blank
-
-----
-
-
-
 
 
 
