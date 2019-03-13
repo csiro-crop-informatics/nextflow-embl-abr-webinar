@@ -44,6 +44,36 @@ output:
 knitr::opts_chunk$set(cache=TRUE)
 ```
 
+
+
+
+
+
+<div class="column-left">
+![](https://raw.githubusercontent.com/csiro-crop-informatics/biokanga-manuscript/master/figures/dag.png)
+
+<!-- <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Nextflow&#39;s DAG of this pipeline is slightly more complicated... <a href="https://t.co/B7HVkCRifp">pic.twitter.com/B7HVkCRifp</a></p>&mdash; Diogo Silva (@ODiogoSilva) <a href="https://twitter.com/ODiogoSilva/status/987386007485075461?ref_src=twsrc%5Etfw">April 20, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8">
+
+</script> -->
+
+</div>
+
+<div class="column-right" style="center">
+
+## The challenge
+
+### Large analysis workflows are fragile ecosystems of software tools, scripts and dependencies.
+
+### This complexity commonly makes these workflows not only irreproducible but sometimes even not re-runnable outside their original development environment.
+
+</div>
+
+
+
+
+----
+
 <div class="column-left">
 
 [![https://xkcd.com/242/](https://imgs.xkcd.com/comics/the_difference.png){ width=80% }](https://xkcd.com/242/)
@@ -53,27 +83,25 @@ knitr::opts_chunk$set(cache=TRUE)
 
 <div class="column-right" style="center">
 
+
+
 ### Let others and your future self(!)
 
 * reliably re-run your analyses
 * trace back origins of results
 
-* We re-run pipelines due to
-  * new data (e.g. additional samples)
-  * updated software
-  * different compute environment (cloud?)
-  * errors found
-  * new ideas
+### Re-running pipelines
+
+* new data (e.g. additional samples)
+* updated software
+* different compute environment (cloud?)
+* errors found
+* new ideas
 
 </div>
 
 
-----
 
-## The challenge
-
-* Large analysis workflows are fragile ecosystems of software tools, scripts and dependencies.
-* This complexity commonly makes these workflows not only irreproducible but sometimes even not re-runnable outside their original development environment.
 
 
 ----
@@ -109,7 +137,7 @@ knitr::opts_chunk$set(cache=TRUE)
   * abstraction level
 
 
-----
+<!-- ----
 
 ### Non-GUI, bioinformatics-flavoured and actively developed
 
@@ -127,61 +155,70 @@ knitr::opts_chunk$set(cache=TRUE)
   * 2018 [https://vatlab.github.io/blog/post/comparison/](https://vatlab.github.io/blog/post/comparison/) (by SoS authors)
   * 2017 [https://www.nature.com/articles/nbt.3820/tables/1](https://www.nature.com/articles/nbt.3820/tables/1) (by NF authors)
   * 2016 [https://jmazz.me/blog/NGS-Workflows](https://jmazz.me/blog/NGS-Workflows) (blog)
-  * 2016 [https://doi.org/10.1093/bib/bbw020](https://doi.org/10.1093/bib/bbw020) (review, not quite right about NF)
+  * 2016 [https://doi.org/10.1093/bib/bbw020](https://doi.org/10.1093/bib/bbw020) (review, not quite right about NF) -->
+
+----
+
+
+![](figs/floden1.png){width=80%}
+
 
 ----
 
 
 ## [Nextflow](https://www.nextflow.io/)
 
-* Nextflow is a reactive workflow framework and a domain specific programming language.
+* A reactive workflow framework and a domain specific programming language.
 * Implicitly parallelized, asynchronous data streams
-* Domain specific language developed in Bioinformatics space
 * Separation of pipeline logic from layers defining
   * software environment (on `$PATH`, modules, binaries, conda, containers)
   * execution environment (laptop, server, HPC cluster, cloud)
-
-
-
 * Integration with git hosting services
 
 
-* Designed for
+### Designed for
+
   * specific use case: seamless scalability of existing tools and scripts
   * for bioinformaticians familiar with programming
+
+---
+
+## [Nextflow](https://www.nextflow.io/)
 
 ### Features
 
 * Separation of pipeline logic from compute environment definition(s)
-* Syntax is a superset of Groovy, but **polyglot**
-  * easily mix scripting languages
-
+* Syntax is a superset of Groovy, but **polyglot** - easily mix scripting languages
 * Out-of-the-box support for
   * SGE, LSF, **SLURM**, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, Amazon Cloud, AWS Batch, Google Cloud
 
-
-
 * Support for Conda/[Bioconda](https://bioconda.github.io/)
 
-
-
-<small>[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)</small>
+<small>
+[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
+</small>
 
 
 ----
 
-## More about Nextflow
+## Nextflow building blocks
 
-### *Processes* (tasks) executed in separate work directories
+### *Processes* (tasks)
 
   * safe and lock-free parallelization
+  * executed in separate work directories
   * easy clean-up, no issue of partial results following an error
 
 
 ### *Channels*
 
-  * facilitate data flow between processes
-  * a suite of operators to shape the data flow
+  * facilitate data flow between processes by linking their outputs/inputs
+  * a suite of [operators](https://www.nextflow.io/docs/latest/operator.html) applied to channels to shape the data flow
+    * filtering
+    * transforming
+    * forking
+    * combining
+    * ...and more
 
 ----
 
@@ -192,7 +229,7 @@ knitr::opts_chunk$set(cache=TRUE)
 
 * POSIX compatible system (Linux, Solaris, OS X, etc)
 * Bash 2.3 (or later)
-* Java 8
+* Java 8  (or later)
 
 ### Install
 
@@ -210,16 +247,17 @@ curl -s https://get.nextflow.io | bash
 
 ----
 
-## Hello ~~world~~ syntax
+## Hello world syntax
 
-```{bash, comment=''}
+```{bash, comment='', echo = FALSE}
 curl -sL  https://raw.githubusercontent.com/nextflow-io/hello/master/main.nf
 ```
 
 
 ----
 
-## [Hello  ~~world~~ shared pipelines](https://www.nextflow.io/blog/2014/share-nextflow-pipelines-with-github.html)
+## Hello world run
+
 
 ```{bash, comment=''}
 nextflow run hello
@@ -231,7 +269,9 @@ nextflow info hello
 
 ----
 
-## Run specific revision (tag/branch/commit SHA hash)
+## [Hello  ~~world~~ shared pipelines](https://www.nextflow.io/blog/2014/share-nextflow-pipelines-with-github.html)
+
+* Run specific revision (tag/branch/commit SHA hash)
 
 ```{bash, eval=FALSE}
 nextflow run hello -r v1.1
@@ -273,25 +313,6 @@ nextflow run main.nf -resume
 
 ## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
 
-<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="true" data-loop="true" data-size="medium">
-
-</script>
-
-<!-- data-cols="200" data-rows="50"  -->
-
-----
-
-## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
-
-
-```{bash, comment=''}
-nextflow run ../main.nf -profile docker -resume
-```
-
-----
-
-## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
-
 
 ```{bash, echo = FALSE}
 dot -Tpng -Gsize=9,7\! -Gdpi=100 -ofigs/flowchart_small.png flowinfo/flowchart.dot
@@ -305,6 +326,29 @@ dot -Tpng -Gsize=9,7\! -Gdpi=100 -ofigs/flowchart_small.png flowinfo/flowchart.d
 <div class="column-right">
 ![Flowchart](figs/flowchart_small.png)
 </div>
+
+
+----
+
+## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
+
+
+```{bash, comment=''}
+nextflow run ../main.nf -profile docker -resume
+```
+
+
+----
+
+## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
+
+<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="true" data-size="medium">
+</script>
+
+<!-- data-cols="200" data-rows="50"  -->
+
+
+
 
 ----
 
@@ -338,6 +382,19 @@ nextflow run blast-example -with-docker -with-dag figs/blast.png \
 tree -ah work
 ```
 
+----
+
+## [Configuration file(s)](https://www.nextflow.io/docs/latest/config.html)
+
+* `nextflow.config`
+* `$HOME/.nextflow/config`
+* But also
+  * Include multiple config files via [`includeConfig another.config`](https://www.nextflow.io/docs/latest/config.html#config-include)
+  * Extend config by passing additional file at run time `-c additional.config`
+  * Ignore default and use custom config file passed at run time `-C custom.config`
+
+* [Config scopes](https://www.nextflow.io/docs/latest/config.html#config-scopes) e.g. `env`, `params`, `process`, `docker`...
+* [Config profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles)
 
 ----
 
@@ -358,19 +415,6 @@ process extract_reads {
 curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/nextflow.config
 ```
 
-----
-
-## [Configuration file(s)](https://www.nextflow.io/docs/latest/config.html)
-
-* `nextflow.config`
-* `$HOME/.nextflow/config`
-* But also
-  * Include multiple config files via [`includeConfig another.config`](https://www.nextflow.io/docs/latest/config.html#config-include)
-  * Extend config by passing additional file at run time `-c additional.config`
-  * Ignore default and use custom config file passed at run time `-C custom.config`
-
-* [Config scopes](https://www.nextflow.io/docs/latest/config.html#config-scopes) e.g. `env`, `params`, `process`, `docker`...
-* [Config profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles)
 
 ----
 
@@ -388,24 +432,55 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm
 nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm,singularity,singularitymodule
 
 #Cloud
-nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch -work-dir s3://your_s3_bucket/work --outdir s3://your_s3_bucket/results
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch \
+  -work-dir s3://your_s3_bucket/work --outdir s3://your_s3_bucket/results
 ```
+
+## Setting up software environment(s)
+
+* Global software env for the workflow
+* Separate software envs for individual processes or subsets
+* A bit of both
+
+### Example workflow: global Conda env -> Docker -> Singularity
 
 ----
 
 ## Software environment (Conda)
 
-* Conda environment defined for this tutorial
+<div class="column-left">
+
+* can be used directly or to build a container
+* can be slow...
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Conda fail: the infinite &quot;solving environment&quot; wheel of death.<br><br>I just downloaded the software and built from source.  It was much faster.<a href="https://twitter.com/hashtag/conda?src=hash&amp;ref_src=twsrc%5Etfw">#conda</a> <a href="https://twitter.com/hashtag/bioconda?src=hash&amp;ref_src=twsrc%5Etfw">#bioconda</a> <a href="https://twitter.com/hashtag/wheelofdeath?src=hash&amp;ref_src=twsrc%5Etfw">#wheelofdeath</a></p>&mdash; Nils Homer (@nilshomer) <a href="https://twitter.com/nilshomer/status/1093380228833980416?ref_src=twsrc%5Etfw">February 7, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8">
+</script>
+
+</div>
+
+<div class="column-right">
+
+### Conda environment defined for this tutorial
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
 curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/conda.yaml
 ```
+</div>
+
+
 
 ----
 
 ## Software environment (Docker)
 
-* Dockerfile
+* Automated build on Docker Hub
+* Pipeline pulls the container image when run with
+  * `-profile docker`  (if defined)
+  * `-with-docker`
+* Need not be conda-based
+
+### Dockerfile
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
 curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Dockerfile
@@ -415,11 +490,16 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
 
 ## Software environment (Singularity)
 
-* Singularity recipe
+* Singularity *can* pull from Docker Hub and convert to its format
+* Dedicated build on Singularity Hub ensures the same image is used (reproducibility!)
+* Need not be Docker based
+
+### Singularity recipe
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
 curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Singularity
 ```
+
 
 ----
 
