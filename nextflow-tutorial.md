@@ -1,5 +1,14 @@
-This tutorial re-implements in Nextflow the logic of the Snakemake workflow presented in [this webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar#data-for-the-webinar) using the same data sets.
+This workflow re-implements in Nextflow the logic of the Snakemake workflow presented in [this webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar#data-for-the-webinar) using the same data sets.
 
+
+- [Nextflow installation](#nextflow-installation)
+- [Software environment](#software-environment)
+- [Nextflow version required (only if using ansi logging)](#nextflow-version-required-only-if-using-ansi-logging)
+- [Running the example pipeline](#running-the-example-pipeline)
+  - [Local/server profiles](#localserver-profiles)
+  - [HPC (SLURM) profiles](#hpc-slurm-profiles)
+  - [Cloud profile](#cloud-profile)
+- [Contributing](#contributing)
 
 ##  Nextflow installation
 
@@ -29,7 +38,7 @@ It probably makes sense to move the executable to a [directory accessible via `$
 ## Software environment
 
 
-* Conda or either one of Docker or Singularity to run the appropriate container with all the remaining required software
+* Conda or either one of Docker or Singularity to run the appropriate container with all the remaining required software.
 
 
   [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
@@ -54,11 +63,9 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar
 By default, only one of the 16 wheat accessions will be processed. To process a subset of say, 5 use `--take 5` or to process all use `--take all`.
 
 
-The intended use is with one of the execution [profiles](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/blob/13bf8b1a041541ad8bc1e30d5bdef23e2b37b67f/nextflow.config#L44-L94)
+The intended use is with one of the execution [profiles](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/blob/13bf8b1a041541ad8bc1e30d5bdef23e2b37b67f/nextflow.config#L44-L94).
 
-## Execution profiles
-
-### Local/server
+### Local/server profiles
 
 ```
 nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile conda
@@ -67,15 +74,15 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile singulari
 ```
 
 
-### HPC (SLURM)
+### HPC (SLURM) profiles
 
 ```
-nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm
+nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm,conda
 nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile slurm,singularity,singularitymodule
 ```
 
 
-### Cloud
+### Cloud profile
 
 If you are new to AWS batch and/or nextflow, follow [this blog post](https://antunderwood.gitlab.io/bioinformant-blog/posts/running_nextflow_on_aws_batch/), once you are done, or you already use AWS batch, you may be able to simply run
 
@@ -86,4 +93,7 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch 
 
 after replacing `your_s3_bucket` with a bucket you have created on S3.
 
+## Contributing
 
+* Please submit [GitHub issues](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/issues/new) to indicate what needs to be clarified or explained.
+* Pull requests are very welcome.
