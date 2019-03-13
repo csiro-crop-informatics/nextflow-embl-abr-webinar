@@ -70,8 +70,6 @@ knitr::opts_chunk$set(cache=TRUE)
 </div>
 
 
-
-
 ----
 
 <div class="column-left">
@@ -101,24 +99,20 @@ knitr::opts_chunk$set(cache=TRUE)
 </div>
 
 
-
-
-
 ----
 
 ## Workflows wish-list
 
 * version controlled
-* sharable
 * container-backed
-* seamless execution across different environments
-    * laptop (if computationally feasible)
+* seamless execution across different environments (if computationally feasible)
+    * laptop
     * server
     * cluster
     * cloud
+* sharable
 
 <div class="column-right">
-<!--![](https://openclipart.org/download/192541/pushthebutton.svg){width=33%}-->
 ![](figs/pushthebutton.svg){width=33%}
 </div>
 
@@ -136,63 +130,40 @@ knitr::opts_chunk$set(cache=TRUE)
   * learning curve
   * abstraction level
 
-
-<!-- ----
-
-### Non-GUI, bioinformatics-flavoured and actively developed
-
-* Nextflow
-  * dataflow programming model
-  * conditional paths which may depend on intermediate results
-  * DAG not known in advance
-
-* Snakemake: *a pythonic workflow system* - covered in last [EMBL-ABR webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar)
-  * follows `make` philosophy
-  * rules and patterns that depend on input/output file names
-  * explicit, precomputed DAG
-
-* Comparisons
-  * 2018 [https://vatlab.github.io/blog/post/comparison/](https://vatlab.github.io/blog/post/comparison/) (by SoS authors)
-  * 2017 [https://www.nature.com/articles/nbt.3820/tables/1](https://www.nature.com/articles/nbt.3820/tables/1) (by NF authors)
-  * 2016 [https://jmazz.me/blog/NGS-Workflows](https://jmazz.me/blog/NGS-Workflows) (blog)
-  * 2016 [https://doi.org/10.1093/bib/bbw020](https://doi.org/10.1093/bib/bbw020) (review, not quite right about NF) -->
-
 ----
-
 
 ![](figs/floden1.png){width=80%}
 
+----
+
+
+## [Nextflow](https://www.nextflow.io/)
+
+### A reactive workflow framework and a domain specific programming language.
+
+### Designed for
+* specific use case: seamless scalability of existing tools and scripts
+* for bioinformaticians familiar with programming
+
+
+<small>
+[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
+</small>
 
 ----
 
 
 ## [Nextflow](https://www.nextflow.io/)
 
-* A reactive workflow framework and a domain specific programming language.
+
 * Implicitly parallelized, asynchronous data streams
-* Separation of pipeline logic from layers defining
+* Separation of pipeline logic from the definitions of
   * software environment (on `$PATH`, modules, binaries, conda, containers)
   * execution environment (laptop, server, HPC cluster, cloud)
 * Integration with git hosting services
-
-
-### Designed for
-
-  * specific use case: seamless scalability of existing tools and scripts
-  * for bioinformaticians familiar with programming
-
----
-
-## [Nextflow](https://www.nextflow.io/)
-
-### Features
-
-* Separation of pipeline logic from compute environment definition(s)
-* Syntax is a superset of Groovy, but **polyglot** - easily mix scripting languages
 * Out-of-the-box support for
   * SGE, LSF, **SLURM**, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, Amazon Cloud, AWS Batch, Google Cloud
-
-* Support for Conda/[Bioconda](https://bioconda.github.io/)
+* Support for Conda
 
 <small>
 [https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
