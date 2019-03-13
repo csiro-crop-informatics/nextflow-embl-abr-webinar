@@ -1,0 +1,270 @@
+<!doctype html>
+<!--
+  ~ Copyright 2013-2019, Centre for Genomic Regulation (CRG)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Cscript src='" + prot + "code.jquery.com/jquery-latest.min.js' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "d3js.org/d3.v3.min.js' charset='utf-8' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/nextflow-io/d3-timeline/82622c4cc35bac7283b3a317826b0709ac1ae476/src/d3-timeline.js' type='text/javascript' %3E%3C/script%3E"));
+</script>
+<style type="text/css">
+* {
+  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.axis path,
+.axis line {
+fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+}
+
+div#timeline g text {
+  font-size: 13px;
+}
+
+text.timeline-label {
+  font-size: 13px;
+}
+
+#timeline2 .axis {
+  transform: translate(0px,30px);
+  -ms-transform: translate(0px,30px); /* IE 9 */
+  -webkit-transform: translate(0px,30px); /* Safari and Chrome */
+  -o-transform: translate(0px,30px); /* Opera */
+  -moz-transform: translate(0px,30px); /* Firefox */
+}
+
+.coloredDiv {
+  height:20px; width:20px; float:left;
+}
+
+#footer {
+  padding-top: 3em; color: #bfbfbf; font-size: 13px;
+}
+
+#footer a:visited {
+  color: #bfbfbf;
+  text-decoration: underline;
+}
+</style>
+<script type="text/javascript">
+var handler=null;
+// see https://github.com/mbostock/d3/wiki/Ordinal-Scales#category20c
+var colors = d3.scale.category20c().domain(d3.range(0,20)).range()
+
+function c0(index) { return "#9c9c9c"; }
+function c1(index) { return "#bdbdbd"; }
+function c2(index) { return colors[index % 16]; } // <-- note: uses only the first 16 colors
+
+var elapsed="4m 19s"
+var beginningMillis=1552469799105;
+var endingMillis=1552474923849;
+var data=[
+{"label": "extract_reads (Alsen)", "times": [{"starting_time": 1552469799105, "ending_time": 1552469897212, "color":c1(0)}, {"starting_time": 1552469897212, "ending_time": 1552469898681, "color":c0(0), "label": "1m 48s \/ 168.1 MB \/ CACHED"}, {"starting_time": 1552469898681, "ending_time": 1552469907551, "color":c1(0)}]},
+{"label": "extract_reads (ACBarrie)", "times": [{"starting_time": 1552469799239, "ending_time": 1552469897236, "color":c1(0)}, {"starting_time": 1552469897236, "ending_time": 1552469898639, "color":c0(0), "label": "1m 49s \/ 168.1 MB \/ CACHED"}, {"starting_time": 1552469898639, "ending_time": 1552469908677, "color":c1(0)}]},
+{"label": "extract_reads (Baxter)", "times": [{"starting_time": 1552469800132, "ending_time": 1552469897246, "color":c1(0)}, {"starting_time": 1552469897246, "ending_time": 1552469899012, "color":c0(0), "label": "1m 49s \/ 168.1 MB \/ CACHED"}, {"starting_time": 1552469899012, "ending_time": 1552469909120, "color":c1(0)}]},
+{"label": "extract_reads (Chara)", "times": [{"starting_time": 1552469799258, "ending_time": 1552469897238, "color":c1(0)}, {"starting_time": 1552469897238, "ending_time": 1552469898297, "color":c0(0), "label": "1m 58s \/ 178.9 MB \/ CACHED"}, {"starting_time": 1552469898297, "ending_time": 1552469917298, "color":c1(0)}]},
+{"label": "extract_reads (Drysdale)", "times": [{"starting_time": 1552469799233, "ending_time": 1552469897224, "color":c1(0)}, {"starting_time": 1552469897224, "ending_time": 1552469898379, "color":c0(0), "label": "1m 49s \/ 178.7 MB \/ CACHED"}, {"starting_time": 1552469898379, "ending_time": 1552469908438, "color":c1(0)}]},
+{"label": "fastqc_raw (ACBarrie)", "times": [{"starting_time": 1552469909756, "ending_time": 1552469927240, "color":c1(1)}, {"starting_time": 1552469927240, "ending_time": 1552469935889, "color":c0(1), "label": "38.6s \/ 2.7 GB \/ CACHED"}, {"starting_time": 1552469935889, "ending_time": 1552469948359, "color":c1(1)}]},
+{"label": "bwa_index", "times": [{"starting_time": 1552473031469, "ending_time": 1552473050043, "color":c1(2)}, {"starting_time": 1552473050043, "ending_time": 1552473050111, "color":c0(2), "label": "28.7s \/ 31.1 MB \/ CACHED"}, {"starting_time": 1552473050111, "ending_time": 1552473060210, "color":c1(2)}]},
+{"label": "fastqc_trimmed (Drysdale)", "times": [{"starting_time": 1552469959270, "ending_time": 1552469978096, "color":c1(3)}, {"starting_time": 1552469978096, "ending_time": 1552469983690, "color":c0(3), "label": "38.2s \/ 2.7 GB \/ CACHED"}, {"starting_time": 1552469983690, "ending_time": 1552469997430, "color":c1(3)}]},
+{"label": "fastqc_raw (Alsen)", "times": [{"starting_time": 1552469909647, "ending_time": 1552469927236, "color":c1(1)}, {"starting_time": 1552469927236, "ending_time": 1552469932836, "color":c0(1), "label": "38.5s \/ 2.7 GB \/ CACHED"}, {"starting_time": 1552469932836, "ending_time": 1552469948127, "color":c1(1)}]},
+{"label": "fastqc_raw (Baxter)", "times": [{"starting_time": 1552469910823, "ending_time": 1552469957225, "color":c1(1)}, {"starting_time": 1552469957225, "ending_time": 1552469967563, "color":c0(1), "label": "1m 17s \/ 2.7 GB \/ CACHED"}, {"starting_time": 1552469967563, "ending_time": 1552469987408, "color":c1(1)}]},
+{"label": "extract_reads (H45)", "times": [{"starting_time": 1552474670466, "ending_time": 1552474695955, "color":c1(0)}, {"starting_time": 1552474695955, "ending_time": 1552474696845, "color":c2(0), "label": "36.8s \/ 179.9 MB"}, {"starting_time": 1552474696845, "ending_time": 1552474707245, "color":c1(0)}]},
+{"label": "trimmomatic_pe (Alsen)", "times": [{"starting_time": 1552469910324, "ending_time": 1552469927243, "color":c1(4)}, {"starting_time": 1552469927243, "ending_time": 1552469928278, "color":c0(4), "label": "38.3s \/ 3.7 GB \/ CACHED"}, {"starting_time": 1552469928278, "ending_time": 1552469948645, "color":c1(4)}]},
+{"label": "trimmomatic_pe (ACBarrie)", "times": [{"starting_time": 1552469910839, "ending_time": 1552469927246, "color":c1(4)}, {"starting_time": 1552469927246, "ending_time": 1552469928192, "color":c0(4), "label": "38.1s \/ 3.6 GB \/ CACHED"}, {"starting_time": 1552469928192, "ending_time": 1552469948959, "color":c1(4)}]},
+{"label": "fastqc_raw (Drysdale)", "times": [{"starting_time": 1552469909518, "ending_time": 1552469927229, "color":c1(1)}, {"starting_time": 1552469927229, "ending_time": 1552469933932, "color":c0(1), "label": "38s \/ 2.7 GB \/ CACHED"}, {"starting_time": 1552469933932, "ending_time": 1552469947474, "color":c1(1)}]},
+{"label": "extract_reads (Wyalkatchem)", "times": [{"starting_time": 1552474671401, "ending_time": 1552474695962, "color":c1(0)}, {"starting_time": 1552474695962, "ending_time": 1552474696945, "color":c2(0), "label": "37.8s \/ 181 MB"}, {"starting_time": 1552474696945, "ending_time": 1552474709203, "color":c1(0)}]},
+{"label": "extract_reads (Gladius)", "times": [{"starting_time": 1552474670211, "ending_time": 1552474695951, "color":c1(0)}, {"starting_time": 1552474695951, "ending_time": 1552474696848, "color":c2(0), "label": "36s \/ 179.9 MB"}, {"starting_time": 1552474696848, "ending_time": 1552474706187, "color":c1(0)}]},
+{"label": "extract_reads (Kukri)", "times": [{"starting_time": 1552474670508, "ending_time": 1552474695959, "color":c1(0)}, {"starting_time": 1552474695959, "ending_time": 1552474696815, "color":c2(0), "label": "37s \/ 179.9 MB"}, {"starting_time": 1552474696815, "ending_time": 1552474707537, "color":c1(0)}]},
+{"label": "fastqc_trimmed (ACBarrie)", "times": [{"starting_time": 1552469950340, "ending_time": 1552469967230, "color":c1(3)}, {"starting_time": 1552469967230, "ending_time": 1552469976467, "color":c0(3), "label": "38.3s \/ 2.7 GB \/ CACHED"}, {"starting_time": 1552469976467, "ending_time": 1552469988638, "color":c1(3)}]},
+{"label": "extract_reads (RAC875)", "times": [{"starting_time": 1552474670441, "ending_time": 1552474685964, "color":c1(0)}, {"starting_time": 1552474685964, "ending_time": 1552474687353, "color":c2(0), "label": "36.5s \/ 168.1 MB"}, {"starting_time": 1552474687353, "ending_time": 1552474706932, "color":c1(0)}]},
+{"label": "extract_reads (Westonia)", "times": [{"starting_time": 1552474670601, "ending_time": 1552474685970, "color":c1(0)}, {"starting_time": 1552474685970, "ending_time": 1552474687021, "color":c2(0), "label": "37.3s \/ 181 MB"}, {"starting_time": 1552474687021, "ending_time": 1552474707857, "color":c1(0)}]},
+{"label": "trimmomatic_pe (Baxter)", "times": [{"starting_time": 1552469911838, "ending_time": 1552469958196, "color":c1(4)}, {"starting_time": 1552469958196, "ending_time": 1552469958934, "color":c0(4), "label": "1m 6s \/ 3.6 GB \/ CACHED"}, {"starting_time": 1552469958934, "ending_time": 1552469977403, "color":c1(4)}]},
+{"label": "bwa_mem (ACBarrie)", "times": [{"starting_time": 1552473061945, "ending_time": 1552473080046, "color":c1(5)}, {"starting_time": 1552473080046, "ending_time": 1552473080479, "color":c0(5), "label": "39.2s \/ 271.7 MB \/ CACHED"}, {"starting_time": 1552473080479, "ending_time": 1552473101105, "color":c1(5)}]},
+{"label": "extract_reads (Volcanii)", "times": [{"starting_time": 1552474670861, "ending_time": 1552474685976, "color":c1(0)}, {"starting_time": 1552474685976, "ending_time": 1552474687711, "color":c2(0), "label": "37.3s \/ 168.1 MB"}, {"starting_time": 1552474687711, "ending_time": 1552474708116, "color":c1(0)}]},
+{"label": "bwa_mem (Alsen)", "times": [{"starting_time": 1552473062196, "ending_time": 1552473080050, "color":c1(5)}, {"starting_time": 1552473080050, "ending_time": 1552473080365, "color":c0(5), "label": "39.7s \/ 271.6 MB \/ CACHED"}, {"starting_time": 1552473080365, "ending_time": 1552473101898, "color":c1(5)}]},
+{"label": "extract_reads (Xiaoyan)", "times": [{"starting_time": 1552474671246, "ending_time": 1552474685984, "color":c1(0)}, {"starting_time": 1552474685984, "ending_time": 1552474686896, "color":c2(0), "label": "37.4s \/ 179.9 MB"}, {"starting_time": 1552474686896, "ending_time": 1552474708602, "color":c1(0)}]},
+{"label": "extract_reads (Pastor)", "times": [{"starting_time": 1552474671304, "ending_time": 1552474685987, "color":c1(0)}, {"starting_time": 1552474685987, "ending_time": 1552474687000, "color":c2(0), "label": "37.6s \/ 180.8 MB"}, {"starting_time": 1552474687000, "ending_time": 1552474708886, "color":c1(0)}]},
+{"label": "trimmomatic_pe (Drysdale)", "times": [{"starting_time": 1552469911343, "ending_time": 1552469937215, "color":c1(4)}, {"starting_time": 1552469937215, "ending_time": 1552469938443, "color":c0(4), "label": "46.1s \/ 3.2 GB \/ CACHED"}, {"starting_time": 1552469938443, "ending_time": 1552469957423, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Excalibur)", "times": [{"starting_time": 1552474426716, "ending_time": 1552474444026, "color":c1(4)}, {"starting_time": 1552474444026, "ending_time": 1552474444625, "color":c0(4), "label": "27.6s \/ 3.3 GB \/ CACHED"}, {"starting_time": 1552474444625, "ending_time": 1552474454270, "color":c1(4)}]},
+{"label": "bwa_mem (Chara)", "times": [{"starting_time": 1552473062781, "ending_time": 1552473110062, "color":c1(5)}, {"starting_time": 1552473110062, "ending_time": 1552473110656, "color":c0(5), "label": "1m 8s \/ 272.9 MB \/ CACHED"}, {"starting_time": 1552473110656, "ending_time": 1552473131051, "color":c1(5)}]},
+{"label": "extract_reads (Yitpi)", "times": [{"starting_time": 1552474671706, "ending_time": 1552474695964, "color":c1(0)}, {"starting_time": 1552474695964, "ending_time": 1552474696833, "color":c2(0), "label": "37.8s \/ 179.9 MB"}, {"starting_time": 1552474696833, "ending_time": 1552474709542, "color":c1(0)}]},
+{"label": "bwa_mem (Drysdale)", "times": [{"starting_time": 1552473062524, "ending_time": 1552473110057, "color":c1(5)}, {"starting_time": 1552473110057, "ending_time": 1552473110503, "color":c0(5), "label": "1m 8s \/ 273.1 MB \/ CACHED"}, {"starting_time": 1552473110503, "ending_time": 1552473130243, "color":c1(5)}]},
+{"label": "fastqc_raw (Gladius)", "times": [{"starting_time": 1552474708481, "ending_time": 1552474726030, "color":c1(1)}, {"starting_time": 1552474726030, "ending_time": 1552474734263, "color":c2(1), "label": "47.7s \/ 2.7 GB"}, {"starting_time": 1552474734263, "ending_time": 1552474756148, "color":c1(1)}]},
+{"label": "fastqc_raw (H45)", "times": [{"starting_time": 1552474708709, "ending_time": 1552474726034, "color":c1(1)}, {"starting_time": 1552474726034, "ending_time": 1552474734301, "color":c2(1), "label": "47.7s \/ 2.7 GB"}, {"starting_time": 1552474734301, "ending_time": 1552474756403, "color":c1(1)}]},
+{"label": "fastqc_raw (RAC875)", "times": [{"starting_time": 1552474708839, "ending_time": 1552474726037, "color":c1(1)}, {"starting_time": 1552474726037, "ending_time": 1552474733496, "color":c2(1), "label": "47.9s \/ 2.7 GB"}, {"starting_time": 1552474733496, "ending_time": 1552474756691, "color":c1(1)}]},
+{"label": "fastqc_raw (Westonia)", "times": [{"starting_time": 1552474709248, "ending_time": 1552474726051, "color":c1(1)}, {"starting_time": 1552474726051, "ending_time": 1552474737024, "color":c2(1), "label": "37s \/ 2.7 GB"}, {"starting_time": 1552474737024, "ending_time": 1552474746237, "color":c1(1)}]},
+{"label": "fastqc_raw (Kukri)", "times": [{"starting_time": 1552474709265, "ending_time": 1552474726052, "color":c1(1)}, {"starting_time": 1552474726052, "ending_time": 1552474736262, "color":c2(1), "label": "47.7s \/ 2.7 GB"}, {"starting_time": 1552474736262, "ending_time": 1552474756966, "color":c1(1)}]},
+{"label": "fastqc_raw (Volcanii)", "times": [{"starting_time": 1552474709319, "ending_time": 1552474726053, "color":c1(1)}, {"starting_time": 1552474726053, "ending_time": 1552474734642, "color":c2(1), "label": "37.6s \/ 2.7 GB"}, {"starting_time": 1552474734642, "ending_time": 1552474746950, "color":c1(1)}]},
+{"label": "fastqc_raw (Xiaoyan)", "times": [{"starting_time": 1552474709659, "ending_time": 1552474726054, "color":c1(1)}, {"starting_time": 1552474726054, "ending_time": 1552474732481, "color":c2(1), "label": "47.7s \/ 2.7 GB"}, {"starting_time": 1552474732481, "ending_time": 1552474757309, "color":c1(1)}]},
+{"label": "trimmomatic_pe (RAC875)", "times": [{"starting_time": 1552474709875, "ending_time": 1552474726055, "color":c1(4)}, {"starting_time": 1552474726055, "ending_time": 1552474728783, "color":c2(4), "label": "37.4s \/ 3.2 GB"}, {"starting_time": 1552474728783, "ending_time": 1552474747300, "color":c1(4)}]},
+{"label": "fastqc_raw (Pastor)", "times": [{"starting_time": 1552474710411, "ending_time": 1552474726055, "color":c1(1)}, {"starting_time": 1552474726055, "ending_time": 1552474737825, "color":c2(1), "label": "47.2s \/ 2.7 GB"}, {"starting_time": 1552474737825, "ending_time": 1552474757563, "color":c1(1)}]},
+{"label": "fastqc_raw (Wyalkatchem)", "times": [{"starting_time": 1552474710712, "ending_time": 1552474726061, "color":c1(1)}, {"starting_time": 1552474726061, "ending_time": 1552474736115, "color":c2(1), "label": "37s \/ 2.7 GB"}, {"starting_time": 1552474736115, "ending_time": 1552474747689, "color":c1(1)}]},
+{"label": "trimmomatic_pe (Gladius)", "times": [{"starting_time": 1552474710829, "ending_time": 1552474726064, "color":c1(4)}, {"starting_time": 1552474726064, "ending_time": 1552474728747, "color":c2(4), "label": "37.1s \/ 3.2 GB"}, {"starting_time": 1552474728747, "ending_time": 1552474747944, "color":c1(4)}]},
+{"label": "fastqc_raw (Yitpi)", "times": [{"starting_time": 1552474710985, "ending_time": 1552474726069, "color":c1(1)}, {"starting_time": 1552474726069, "ending_time": 1552474733798, "color":c2(1), "label": "47.2s \/ 2.7 GB"}, {"starting_time": 1552474733798, "ending_time": 1552474758188, "color":c1(1)}]},
+{"label": "trimmomatic_pe (Kukri)", "times": [{"starting_time": 1552474711685, "ending_time": 1552474758431, "color":c1(4)}, {"starting_time": 1552474758431, "ending_time": 1552474759325, "color":c2(4), "label": "1m 5s \/ 3.9 GB"}, {"starting_time": 1552474759325, "ending_time": 1552474776230, "color":c1(4)}]},
+{"label": "trimmomatic_pe (H45)", "times": [{"starting_time": 1552474712227, "ending_time": 1552474726069, "color":c1(4)}, {"starting_time": 1552474726069, "ending_time": 1552474728280, "color":c2(4), "label": "36.1s \/ 3.2 GB"}, {"starting_time": 1552474728280, "ending_time": 1552474748299, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Westonia)", "times": [{"starting_time": 1552474712761, "ending_time": 1552474758432, "color":c1(4)}, {"starting_time": 1552474758432, "ending_time": 1552474759280, "color":c2(4), "label": "1m 4s \/ 3.9 GB"}, {"starting_time": 1552474759280, "ending_time": 1552474777085, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Volcanii)", "times": [{"starting_time": 1552474713398, "ending_time": 1552474726070, "color":c1(4)}, {"starting_time": 1552474726070, "ending_time": 1552474728498, "color":c2(4), "label": "35.3s \/ 3.2 GB"}, {"starting_time": 1552474728498, "ending_time": 1552474748649, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Xiaoyan)", "times": [{"starting_time": 1552474713965, "ending_time": 1552474726071, "color":c1(4)}, {"starting_time": 1552474726071, "ending_time": 1552474728508, "color":c2(4), "label": "35.1s \/ 3.2 GB"}, {"starting_time": 1552474728508, "ending_time": 1552474749030, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Pastor)", "times": [{"starting_time": 1552474714538, "ending_time": 1552474758440, "color":c1(4)}, {"starting_time": 1552474758440, "ending_time": 1552474759266, "color":c2(4), "label": "1m 3s \/ 3.7 GB"}, {"starting_time": 1552474759266, "ending_time": 1552474777409, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Wyalkatchem)", "times": [{"starting_time": 1552474715407, "ending_time": 1552474758441, "color":c1(4)}, {"starting_time": 1552474758441, "ending_time": 1552474759369, "color":c2(4), "label": "1m 2s \/ 3.3 GB"}, {"starting_time": 1552474759369, "ending_time": 1552474777720, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Yitpi)", "times": [{"starting_time": 1552474715934, "ending_time": 1552474758441, "color":c1(4)}, {"starting_time": 1552474758441, "ending_time": 1552474759470, "color":c2(4), "label": "1m 2s \/ 3.9 GB"}, {"starting_time": 1552474759470, "ending_time": 1552474778124, "color":c1(4)}]},
+{"label": "fastqc_trimmed (RAC875)", "times": [{"starting_time": 1552474748833, "ending_time": 1552474766007, "color":c1(3)}, {"starting_time": 1552474766007, "ending_time": 1552474775747, "color":c2(3), "label": "37.3s \/ 2.7 GB"}, {"starting_time": 1552474775747, "ending_time": 1552474786131, "color":c1(3)}]},
+{"label": "bwa_mem (RAC875)", "times": [{"starting_time": 1552474749141, "ending_time": 1552474766010, "color":c1(5)}, {"starting_time": 1552474766010, "ending_time": 1552474766577, "color":c2(5), "label": "29.4s \/ 273.3 MB"}, {"starting_time": 1552474766577, "ending_time": 1552474778542, "color":c1(5)}]},
+{"label": "fastqc_trimmed (Gladius)", "times": [{"starting_time": 1552474749445, "ending_time": 1552474766017, "color":c1(3)}, {"starting_time": 1552474766017, "ending_time": 1552474776377, "color":c2(3), "label": "37s \/ 2.7 GB"}, {"starting_time": 1552474776377, "ending_time": 1552474786429, "color":c1(3)}]},
+{"label": "fastqc_trimmed (Volcanii)", "times": [{"starting_time": 1552474749676, "ending_time": 1552474766022, "color":c1(3)}, {"starting_time": 1552474766022, "ending_time": 1552474777769, "color":c2(3), "label": "37s \/ 2.7 GB"}, {"starting_time": 1552474777769, "ending_time": 1552474786708, "color":c1(3)}]},
+{"label": "fastqc_trimmed (H45)", "times": [{"starting_time": 1552474749709, "ending_time": 1552474766024, "color":c1(3)}, {"starting_time": 1552474766024, "ending_time": 1552474774104, "color":c2(3), "label": "37.3s \/ 2.7 GB"}, {"starting_time": 1552474774104, "ending_time": 1552474787016, "color":c1(3)}]},
+{"label": "bwa_mem (Gladius)", "times": [{"starting_time": 1552474749781, "ending_time": 1552474766028, "color":c1(5)}, {"starting_time": 1552474766028, "ending_time": 1552474766420, "color":c2(5), "label": "29.1s \/ 273.1 MB"}, {"starting_time": 1552474766420, "ending_time": 1552474778867, "color":c1(5)}]},
+{"label": "bwa_mem (H45)", "times": [{"starting_time": 1552474749924, "ending_time": 1552474795971, "color":c1(5)}, {"starting_time": 1552474795971, "ending_time": 1552474796409, "color":c2(5), "label": "1m 6s \/ 207.9 MB"}, {"starting_time": 1552474796409, "ending_time": 1552474816221, "color":c1(5)}]},
+{"label": "fastqc_trimmed (Xiaoyan)", "times": [{"starting_time": 1552474749950, "ending_time": 1552474766032, "color":c1(3)}, {"starting_time": 1552474766032, "ending_time": 1552474772683, "color":c2(3), "label": "37.3s \/ 2.7 GB"}, {"starting_time": 1552474772683, "ending_time": 1552474787264, "color":c1(3)}]},
+{"label": "bwa_mem (Volcanii)", "times": [{"starting_time": 1552474750401, "ending_time": 1552474766037, "color":c1(5)}, {"starting_time": 1552474766037, "ending_time": 1552474766746, "color":c2(5), "label": "28.8s \/ 271.6 MB"}, {"starting_time": 1552474766746, "ending_time": 1552474779197, "color":c1(5)}]},
+{"label": "bwa_mem (Xiaoyan)", "times": [{"starting_time": 1552474750590, "ending_time": 1552474766038, "color":c1(5)}, {"starting_time": 1552474766038, "ending_time": 1552474766610, "color":c2(5), "label": "28.9s \/ 271.9 MB"}, {"starting_time": 1552474766610, "ending_time": 1552474779467, "color":c1(5)}]},
+{"label": "multiqc_raw", "times": [{"starting_time": 1552474763961, "ending_time": 1552474795973, "color":c1(6)}, {"starting_time": 1552474795973, "ending_time": 1552474802481, "color":c2(6), "label": "1m 52s \/ 518.6 MB"}, {"starting_time": 1552474802481, "ending_time": 1552474876432, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Kukri)", "times": [{"starting_time": 1552474777756, "ending_time": 1552474795976, "color":c1(3)}, {"starting_time": 1552474795976, "ending_time": 1552474806514, "color":c2(3), "label": "48.4s \/ 2.7 GB"}, {"starting_time": 1552474806514, "ending_time": 1552474826169, "color":c1(3)}]},
+{"label": "bwa_mem (Westonia)", "times": [{"starting_time": 1552474778372, "ending_time": 1552474795980, "color":c1(5)}, {"starting_time": 1552474795980, "ending_time": 1552474796773, "color":c2(5), "label": "27.9s \/ 271.9 MB"}, {"starting_time": 1552474796773, "ending_time": 1552474806267, "color":c1(5)}]},
+{"label": "bwa_mem (Kukri)", "times": [{"starting_time": 1552474778560, "ending_time": 1552474795982, "color":c1(5)}, {"starting_time": 1552474795982, "ending_time": 1552474796330, "color":c2(5), "label": "38.6s \/ 271.7 MB"}, {"starting_time": 1552474796330, "ending_time": 1552474817114, "color":c1(5)}]},
+{"label": "fastqc_trimmed (Westonia)", "times": [{"starting_time": 1552474778767, "ending_time": 1552474796005, "color":c1(3)}, {"starting_time": 1552474796005, "ending_time": 1552474803894, "color":c2(3), "label": "48.1s \/ 2.7 GB"}, {"starting_time": 1552474803894, "ending_time": 1552474826875, "color":c1(3)}]},
+{"label": "fastqc_trimmed (Wyalkatchem)", "times": [{"starting_time": 1552474778882, "ending_time": 1552474796006, "color":c1(3)}, {"starting_time": 1552474796006, "ending_time": 1552474802974, "color":c2(3), "label": "48.2s \/ 2.7 GB"}, {"starting_time": 1552474802974, "ending_time": 1552474827104, "color":c1(3)}]},
+{"label": "fastqc_trimmed (Pastor)", "times": [{"starting_time": 1552474778962, "ending_time": 1552474796007, "color":c1(3)}, {"starting_time": 1552474796007, "ending_time": 1552474808684, "color":c2(3), "label": "48.4s \/ 2.7 GB"}, {"starting_time": 1552474808684, "ending_time": 1552474827351, "color":c1(3)}]},
+{"label": "bwa_mem (Pastor)", "times": [{"starting_time": 1552474778999, "ending_time": 1552474796008, "color":c1(5)}, {"starting_time": 1552474796008, "ending_time": 1552474796630, "color":c2(5), "label": "27.7s \/ 271.7 MB"}, {"starting_time": 1552474796630, "ending_time": 1552474806747, "color":c1(5)}]},
+{"label": "fastqc_trimmed (Yitpi)", "times": [{"starting_time": 1552474779157, "ending_time": 1552474796009, "color":c1(3)}, {"starting_time": 1552474796009, "ending_time": 1552474804471, "color":c2(3), "label": "48.5s \/ 2.7 GB"}, {"starting_time": 1552474804471, "ending_time": 1552474827628, "color":c1(3)}]},
+{"label": "bwa_mem (Yitpi)", "times": [{"starting_time": 1552474779542, "ending_time": 1552474796010, "color":c1(5)}, {"starting_time": 1552474796010, "ending_time": 1552474796387, "color":c2(5), "label": "38.3s \/ 271.9 MB"}, {"starting_time": 1552474796387, "ending_time": 1552474817823, "color":c1(5)}]},
+{"label": "bwa_mem (Wyalkatchem)", "times": [{"starting_time": 1552474779569, "ending_time": 1552474796011, "color":c1(5)}, {"starting_time": 1552474796011, "ending_time": 1552474797513, "color":c2(5), "label": "38.6s \/ 272.4 MB"}, {"starting_time": 1552474797513, "ending_time": 1552474818121, "color":c1(5)}]},
+{"label": "multiqc_trimmed", "times": [{"starting_time": 1552474833257, "ending_time": 1552474845956, "color":c1(7)}, {"starting_time": 1552474845956, "ending_time": 1552474851691, "color":c2(7), "label": "1m 23s \/ 522.3 MB"}, {"starting_time": 1552474851691, "ending_time": 1552474916183, "color":c1(7)}]}
+]
+
+
+function getTickFormat() {
+  var MIN = 1000 * 60
+  var HOUR = MIN * 60
+  var DAY = HOUR * 24
+  var delta = (endingMillis - beginningMillis)
+
+  if( delta < 2 * MIN ) {
+    return {
+      format: d3.time.format("%S"),
+      tickTime: d3.time.seconds,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * HOUR ) {
+    return {
+      format: d3.time.format("%M"),
+      tickTime: d3.time.minutes,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * DAY ) {
+    return {
+      format: d3.time.format("%H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 1,
+      tickSize: 6
+    }
+  }
+
+  if( delta <= 7 * DAY ) {
+    return {
+      format: d3.time.format("%b %e %H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 6,
+      tickSize: 6
+    }
+  }
+
+  return {
+    format: d3.time.format("%b %e"),
+    tickTime: d3.time.days,
+    tickInterval: 1,
+    tickSize: 6
+  }
+}
+
+function getLabelMargin(scale) {
+    $('<span class="labelSpan" style="display: none"></span>').appendTo('body');
+
+    var labelMargin = 0
+    $.each(data, function (key, value) {
+      labelMargin = Math.max(labelMargin, $('.labelSpan').html(value.label).width());
+    });
+
+    $('.labelSpan').remove();
+
+    return (labelMargin * scale);
+}
+
+function render() {
+  handler=null;
+  $("#timeline").empty()
+  $('#label_elapsed').text(elapsed)
+  $('#label_launch').text( d3.time.format('%d %b %Y %H:%M')(new Date(beginningMillis)) )
+
+  var width = $(window).width();
+  var chart = d3.timeline()
+    .stack() // toggles graph stacking
+    .margin({left:getLabelMargin(0.85), right:100, top:0, bottom:0})
+    .tickFormat( getTickFormat() )
+    .rowSeperators('#f5f5f5')
+    .showTimeAxisTick()
+    ;
+  var svg = d3.select("#timeline").append("svg").attr("width", width).datum(data).call(chart);
+}
+
+function hrz() {
+if( handler != null ) clearTimeout(handler)
+  handler = setTimeout(render, 150);
+}
+
+$(document).ready(render)
+$(window).resize(hrz); // resize the applet on window resize
+</script>
+</head>
+
+<body>
+<div>
+  <h3>Processes execution timeline</h3>
+  <p>
+    Launch time: <span id='label_launch'> </span><br>
+    Elapsed time: <span id='label_elapsed'> </span>
+  </p>
+  <div id="timeline"></div>
+</div>
+
+<div id='footer'>
+  Created with Nextflow -- <a href='http://www.nextflow.io' target='_blank'>http://nextflow.io</a>
+</div>
+
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Clink href='" + prot + "fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css' %3E%3C/link%3E"));
+</script>
+</body>
+</html>
