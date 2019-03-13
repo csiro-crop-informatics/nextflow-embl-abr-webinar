@@ -1,0 +1,282 @@
+<!doctype html>
+<!--
+  ~ Copyright 2013-2019, Centre for Genomic Regulation (CRG)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Cscript src='" + prot + "code.jquery.com/jquery-latest.min.js' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "d3js.org/d3.v3.min.js' charset='utf-8' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/nextflow-io/d3-timeline/82622c4cc35bac7283b3a317826b0709ac1ae476/src/d3-timeline.js' type='text/javascript' %3E%3C/script%3E"));
+</script>
+<style type="text/css">
+* {
+  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.axis path,
+.axis line {
+fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+}
+
+div#timeline g text {
+  font-size: 13px;
+}
+
+text.timeline-label {
+  font-size: 13px;
+}
+
+#timeline2 .axis {
+  transform: translate(0px,30px);
+  -ms-transform: translate(0px,30px); /* IE 9 */
+  -webkit-transform: translate(0px,30px); /* Safari and Chrome */
+  -o-transform: translate(0px,30px); /* Opera */
+  -moz-transform: translate(0px,30px); /* Firefox */
+}
+
+.coloredDiv {
+  height:20px; width:20px; float:left;
+}
+
+#footer {
+  padding-top: 3em; color: #bfbfbf; font-size: 13px;
+}
+
+#footer a:visited {
+  color: #bfbfbf;
+  text-decoration: underline;
+}
+</style>
+<script type="text/javascript">
+var handler=null;
+// see https://github.com/mbostock/d3/wiki/Ordinal-Scales#category20c
+var colors = d3.scale.category20c().domain(d3.range(0,20)).range()
+
+function c0(index) { return "#9c9c9c"; }
+function c1(index) { return "#bdbdbd"; }
+function c2(index) { return colors[index % 16]; } // <-- note: uses only the first 16 colors
+
+var elapsed="20m 46s"
+var beginningMillis=1552476118845;
+var endingMillis=1552477364592;
+var data=[
+{"label": "bgzip_chromosome (iwgsc_refseqv1.0_chr4A.fsa.zip)", "times": [{"starting_time": 1552476941603, "ending_time": 1552476941669, "color":c1(0)}, {"starting_time": 1552476941669, "ending_time": 1552476963512, "color":c2(0), "label": "25.9s \/ 191.7 MB"}, {"starting_time": 1552476963512, "ending_time": 1552476967472, "color":c1(0)}]},
+{"label": "extract_reads (ACBarrie)", "times": [{"starting_time": 1552476967513, "ending_time": 1552476967732, "color":c1(1)}, {"starting_time": 1552476967732, "ending_time": 1552476972615, "color":c2(1), "label": "7.3s \/ 168.2 MB"}, {"starting_time": 1552476972615, "ending_time": 1552476974776, "color":c1(1)}]},
+{"label": "extract_reads (Alsen)", "times": [{"starting_time": 1552476967747, "ending_time": 1552476967836, "color":c1(1)}, {"starting_time": 1552476967836, "ending_time": 1552476971733, "color":c2(1), "label": "6.9s \/ 169.2 MB"}, {"starting_time": 1552476971733, "ending_time": 1552476974654, "color":c1(1)}]},
+{"label": "extract_reads (Chara)", "times": [{"starting_time": 1552476974677, "ending_time": 1552476974755, "color":c1(1)}, {"starting_time": 1552476974755, "ending_time": 1552476980276, "color":c2(1), "label": "8s \/ 179.9 MB"}, {"starting_time": 1552476980276, "ending_time": 1552476982632, "color":c1(1)}]},
+{"label": "extract_reads (Baxter)", "times": [{"starting_time": 1552476974819, "ending_time": 1552476974876, "color":c1(1)}, {"starting_time": 1552476974876, "ending_time": 1552476981447, "color":c2(1), "label": "8s \/ 178.9 MB"}, {"starting_time": 1552476981447, "ending_time": 1552476982788, "color":c1(1)}]},
+{"label": "extract_reads (Drysdale)", "times": [{"starting_time": 1552476982658, "ending_time": 1552476982732, "color":c1(1)}, {"starting_time": 1552476982732, "ending_time": 1552476987469, "color":c2(1), "label": "6.9s \/ 179 MB"}, {"starting_time": 1552476987469, "ending_time": 1552476989575, "color":c1(1)}]},
+{"label": "extract_reads (Gladius)", "times": [{"starting_time": 1552476982798, "ending_time": 1552476982888, "color":c1(1)}, {"starting_time": 1552476982888, "ending_time": 1552476987768, "color":c2(1), "label": "6.9s \/ 178.9 MB"}, {"starting_time": 1552476987768, "ending_time": 1552476989696, "color":c1(1)}]},
+{"label": "extract_reads (Excalibur)", "times": [{"starting_time": 1552476989601, "ending_time": 1552476989729, "color":c1(1)}, {"starting_time": 1552476989729, "ending_time": 1552476994001, "color":c2(1), "label": "7.3s \/ 178.9 MB"}, {"starting_time": 1552476994001, "ending_time": 1552476996876, "color":c1(1)}]},
+{"label": "extract_reads (H45)", "times": [{"starting_time": 1552476989724, "ending_time": 1552476989805, "color":c1(1)}, {"starting_time": 1552476989805, "ending_time": 1552476994321, "color":c2(1), "label": "7.3s \/ 179 MB"}, {"starting_time": 1552476994321, "ending_time": 1552476996981, "color":c1(1)}]},
+{"label": "extract_reads (Kukri)", "times": [{"starting_time": 1552476996893, "ending_time": 1552476996977, "color":c1(1)}, {"starting_time": 1552476996977, "ending_time": 1552477002037, "color":c2(1), "label": "7.3s \/ 180 MB"}, {"starting_time": 1552477002037, "ending_time": 1552477004182, "color":c1(1)}]},
+{"label": "extract_reads (Pastor)", "times": [{"starting_time": 1552476996996, "ending_time": 1552476997083, "color":c1(1)}, {"starting_time": 1552476997083, "ending_time": 1552477002134, "color":c2(1), "label": "7.2s \/ 179.9 MB"}, {"starting_time": 1552477002134, "ending_time": 1552477004230, "color":c1(1)}]},
+{"label": "extract_reads (Volcanii)", "times": [{"starting_time": 1552477004211, "ending_time": 1552477004324, "color":c1(1)}, {"starting_time": 1552477004324, "ending_time": 1552477008771, "color":c2(1), "label": "6.9s \/ 178.9 MB"}, {"starting_time": 1552477008771, "ending_time": 1552477011071, "color":c1(1)}]},
+{"label": "extract_reads (RAC875)", "times": [{"starting_time": 1552477004251, "ending_time": 1552477004326, "color":c1(1)}, {"starting_time": 1552477004326, "ending_time": 1552477010054, "color":c2(1), "label": "6.8s \/ 179 MB"}, {"starting_time": 1552477010054, "ending_time": 1552477011004, "color":c1(1)}]},
+{"label": "extract_reads (Westonia)", "times": [{"starting_time": 1552477011034, "ending_time": 1552477011132, "color":c1(1)}, {"starting_time": 1552477011132, "ending_time": 1552477015681, "color":c2(1), "label": "7s \/ 179 MB"}, {"starting_time": 1552477015681, "ending_time": 1552477018009, "color":c1(1)}]},
+{"label": "extract_reads (Xiaoyan)", "times": [{"starting_time": 1552477011077, "ending_time": 1552477011172, "color":c1(1)}, {"starting_time": 1552477011172, "ending_time": 1552477015676, "color":c2(1), "label": "6.7s \/ 178.9 MB"}, {"starting_time": 1552477015676, "ending_time": 1552477017763, "color":c1(1)}]},
+{"label": "extract_reads (Wyalkatchem)", "times": [{"starting_time": 1552477017803, "ending_time": 1552477017968, "color":c1(1)}, {"starting_time": 1552477017968, "ending_time": 1552477023050, "color":c2(1), "label": "7.1s \/ 178.9 MB"}, {"starting_time": 1552477023050, "ending_time": 1552477024901, "color":c1(1)}]},
+{"label": "extract_reads (Yitpi)", "times": [{"starting_time": 1552477018016, "ending_time": 1552477018109, "color":c1(1)}, {"starting_time": 1552477018109, "ending_time": 1552477022760, "color":c2(1), "label": "6.6s \/ 179 MB"}, {"starting_time": 1552477022760, "ending_time": 1552477024660, "color":c1(1)}]},
+{"label": "bgzip_chromosome_subregion", "times": [{"starting_time": 1552477024700, "ending_time": 1552477024760, "color":c1(2)}, {"starting_time": 1552477024760, "ending_time": 1552477040587, "color":c2(2), "label": "19.2s \/ 57.1 MB"}, {"starting_time": 1552477040587, "ending_time": 1552477043876, "color":c1(2)}]},
+{"label": "fastqc_raw (ACBarrie)", "times": [{"starting_time": 1552477024914, "ending_time": 1552477025001, "color":c1(3)}, {"starting_time": 1552477025001, "ending_time": 1552477041252, "color":c2(3), "label": "18.4s \/ 2.7 GB"}, {"starting_time": 1552477041252, "ending_time": 1552477043335, "color":c1(3)}]},
+{"label": "fastqc_raw (Alsen)", "times": [{"starting_time": 1552477043354, "ending_time": 1552477043435, "color":c1(3)}, {"starting_time": 1552477043435, "ending_time": 1552477054799, "color":c2(3), "label": "12.8s \/ 2.7 GB"}, {"starting_time": 1552477054799, "ending_time": 1552477056115, "color":c1(3)}]},
+{"label": "trimmomatic_pe (ACBarrie)", "times": [{"starting_time": 1552477044520, "ending_time": 1552477044580, "color":c1(4)}, {"starting_time": 1552477044580, "ending_time": 1552477047276, "color":c2(4), "label": "7.7s \/ 3.5 GB"}, {"starting_time": 1552477047276, "ending_time": 1552477052246, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Alsen)", "times": [{"starting_time": 1552477052563, "ending_time": 1552477052647, "color":c1(4)}, {"starting_time": 1552477052647, "ending_time": 1552477055085, "color":c2(4), "label": "8.1s \/ 3.5 GB"}, {"starting_time": 1552477055085, "ending_time": 1552477060712, "color":c1(4)}]},
+{"label": "fastqc_raw (Chara)", "times": [{"starting_time": 1552477056162, "ending_time": 1552477056215, "color":c1(3)}, {"starting_time": 1552477056215, "ending_time": 1552477069188, "color":c2(3), "label": "17.6s \/ 2.7 GB"}, {"starting_time": 1552477069188, "ending_time": 1552477073800, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Chara)", "times": [{"starting_time": 1552477061021, "ending_time": 1552477061112, "color":c1(4)}, {"starting_time": 1552477061112, "ending_time": 1552477064560, "color":c2(4), "label": "9.1s \/ 3.5 GB"}, {"starting_time": 1552477064560, "ending_time": 1552477070072, "color":c1(4)}]},
+{"label": "fastqc_raw (Baxter)", "times": [{"starting_time": 1552477070109, "ending_time": 1552477070172, "color":c1(3)}, {"starting_time": 1552477070172, "ending_time": 1552477082237, "color":c2(3), "label": "17.5s \/ 2.7 GB"}, {"starting_time": 1552477082237, "ending_time": 1552477087614, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Baxter)", "times": [{"starting_time": 1552477074061, "ending_time": 1552477074102, "color":c1(4)}, {"starting_time": 1552477074102, "ending_time": 1552477080187, "color":c2(4), "label": "9.6s \/ 3.5 GB"}, {"starting_time": 1552477080187, "ending_time": 1552477083615, "color":c1(4)}]},
+{"label": "fastqc_raw (Drysdale)", "times": [{"starting_time": 1552477083637, "ending_time": 1552477083715, "color":c1(3)}, {"starting_time": 1552477083715, "ending_time": 1552477093260, "color":c2(3), "label": "12.5s \/ 2.7 GB"}, {"starting_time": 1552477093260, "ending_time": 1552477096120, "color":c1(3)}]},
+{"label": "fastqc_raw (Gladius)", "times": [{"starting_time": 1552477087632, "ending_time": 1552477087715, "color":c1(3)}, {"starting_time": 1552477087715, "ending_time": 1552477100347, "color":c2(3), "label": "17.8s \/ 2.7 GB"}, {"starting_time": 1552477100347, "ending_time": 1552477105440, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Drysdale)", "times": [{"starting_time": 1552477096407, "ending_time": 1552477096528, "color":c1(4)}, {"starting_time": 1552477096528, "ending_time": 1552477098831, "color":c2(4), "label": "8s \/ 3.5 GB"}, {"starting_time": 1552477098831, "ending_time": 1552477104409, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Gladius)", "times": [{"starting_time": 1552477104689, "ending_time": 1552477104710, "color":c1(4)}, {"starting_time": 1552477104710, "ending_time": 1552477106356, "color":c2(4), "label": "7.2s \/ 3.5 GB"}, {"starting_time": 1552477106356, "ending_time": 1552477111892, "color":c1(4)}]},
+{"label": "fastqc_raw (Excalibur)", "times": [{"starting_time": 1552477105455, "ending_time": 1552477105541, "color":c1(3)}, {"starting_time": 1552477105541, "ending_time": 1552477112488, "color":c2(3), "label": "12.2s \/ 2.7 GB"}, {"starting_time": 1552477112488, "ending_time": 1552477117687, "color":c1(3)}]},
+{"label": "fastqc_raw (H45)", "times": [{"starting_time": 1552477111937, "ending_time": 1552477112011, "color":c1(3)}, {"starting_time": 1552477112011, "ending_time": 1552477121283, "color":c2(3), "label": "12.4s \/ 2.7 GB"}, {"starting_time": 1552477121283, "ending_time": 1552477124351, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Excalibur)", "times": [{"starting_time": 1552477117993, "ending_time": 1552477118090, "color":c1(4)}, {"starting_time": 1552477118090, "ending_time": 1552477119845, "color":c2(4), "label": "2.8s \/ 3.5 GB"}, {"starting_time": 1552477119845, "ending_time": 1552477120808, "color":c1(4)}]},
+{"label": "trimmomatic_pe (H45)", "times": [{"starting_time": 1552477121043, "ending_time": 1552477121109, "color":c1(4)}, {"starting_time": 1552477121109, "ending_time": 1552477122323, "color":c2(4), "label": "6.3s \/ 3.5 GB"}, {"starting_time": 1552477122323, "ending_time": 1552477127293, "color":c1(4)}]},
+{"label": "fastqc_raw (Kukri)", "times": [{"starting_time": 1552477124355, "ending_time": 1552477124451, "color":c1(3)}, {"starting_time": 1552477124451, "ending_time": 1552477137302, "color":c2(3), "label": "17.6s \/ 2.7 GB"}, {"starting_time": 1552477137302, "ending_time": 1552477141966, "color":c1(3)}]},
+{"label": "fastqc_raw (Pastor)", "times": [{"starting_time": 1552477127311, "ending_time": 1552477127392, "color":c1(3)}, {"starting_time": 1552477127392, "ending_time": 1552477140188, "color":c2(3), "label": "18.5s \/ 2.7 GB"}, {"starting_time": 1552477140188, "ending_time": 1552477145794, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Pastor)", "times": [{"starting_time": 1552477142252, "ending_time": 1552477142269, "color":c1(4)}, {"starting_time": 1552477142269, "ending_time": 1552477143488, "color":c2(4), "label": "6.8s \/ 3.5 GB"}, {"starting_time": 1552477143488, "ending_time": 1552477149058, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Kukri)", "times": [{"starting_time": 1552477145961, "ending_time": 1552477145995, "color":c1(4)}, {"starting_time": 1552477145995, "ending_time": 1552477147037, "color":c2(4), "label": "6.4s \/ 3.5 GB"}, {"starting_time": 1552477147037, "ending_time": 1552477152406, "color":c1(4)}]},
+{"label": "fastqc_raw (RAC875)", "times": [{"starting_time": 1552477149070, "ending_time": 1552477149158, "color":c1(3)}, {"starting_time": 1552477149158, "ending_time": 1552477159288, "color":c2(3), "label": "11.7s \/ 2.7 GB"}, {"starting_time": 1552477159288, "ending_time": 1552477160795, "color":c1(3)}]},
+{"label": "fastqc_raw (Volcanii)", "times": [{"starting_time": 1552477152421, "ending_time": 1552477152506, "color":c1(3)}, {"starting_time": 1552477152506, "ending_time": 1552477163513, "color":c2(3), "label": "12.7s \/ 2.7 GB"}, {"starting_time": 1552477163513, "ending_time": 1552477165093, "color":c1(3)}]},
+{"label": "trimmomatic_pe (RAC875)", "times": [{"starting_time": 1552477161096, "ending_time": 1552477161211, "color":c1(4)}, {"starting_time": 1552477161211, "ending_time": 1552477163614, "color":c2(4), "label": "8.1s \/ 3.5 GB"}, {"starting_time": 1552477163614, "ending_time": 1552477169225, "color":c1(4)}]},
+{"label": "trimmomatic_pe (Volcanii)", "times": [{"starting_time": 1552477165255, "ending_time": 1552477165293, "color":c1(4)}, {"starting_time": 1552477165293, "ending_time": 1552477166341, "color":c2(4), "label": "6.5s \/ 3.5 GB"}, {"starting_time": 1552477166341, "ending_time": 1552477171719, "color":c1(4)}]},
+{"label": "fastqc_raw (Xiaoyan)", "times": [{"starting_time": 1552477169234, "ending_time": 1552477169326, "color":c1(3)}, {"starting_time": 1552477169326, "ending_time": 1552477178802, "color":c2(3), "label": "12.5s \/ 2.7 GB"}, {"starting_time": 1552477178802, "ending_time": 1552477181760, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Xiaoyan)", "times": [{"starting_time": 1552477172024, "ending_time": 1552477172082, "color":c1(4)}, {"starting_time": 1552477172082, "ending_time": 1552477175226, "color":c2(4), "label": "7.1s \/ 3.5 GB"}, {"starting_time": 1552477175226, "ending_time": 1552477179112, "color":c1(4)}]},
+{"label": "fastqc_raw (Westonia)", "times": [{"starting_time": 1552477179125, "ending_time": 1552477179217, "color":c1(3)}, {"starting_time": 1552477179217, "ending_time": 1552477187053, "color":c2(3), "label": "11.5s \/ 2.7 GB"}, {"starting_time": 1552477187053, "ending_time": 1552477190635, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Westonia)", "times": [{"starting_time": 1552477182070, "ending_time": 1552477182164, "color":c1(4)}, {"starting_time": 1552477182164, "ending_time": 1552477184832, "color":c2(4), "label": "8.2s \/ 3.5 GB"}, {"starting_time": 1552477184832, "ending_time": 1552477190289, "color":c1(4)}]},
+{"label": "fastqc_raw (Yitpi)", "times": [{"starting_time": 1552477190312, "ending_time": 1552477190390, "color":c1(3)}, {"starting_time": 1552477190390, "ending_time": 1552477198737, "color":c2(3), "label": "12.4s \/ 2.7 GB"}, {"starting_time": 1552477198737, "ending_time": 1552477202677, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Yitpi)", "times": [{"starting_time": 1552477190904, "ending_time": 1552477190950, "color":c1(4)}, {"starting_time": 1552477190950, "ending_time": 1552477193112, "color":c2(4), "label": "7.6s \/ 3.5 GB"}, {"starting_time": 1552477193112, "ending_time": 1552477198518, "color":c1(4)}]},
+{"label": "fastqc_raw (Wyalkatchem)", "times": [{"starting_time": 1552477198581, "ending_time": 1552477198620, "color":c1(3)}, {"starting_time": 1552477198620, "ending_time": 1552477208566, "color":c2(3), "label": "11.7s \/ 2.7 GB"}, {"starting_time": 1552477208566, "ending_time": 1552477210300, "color":c1(3)}]},
+{"label": "trimmomatic_pe (Wyalkatchem)", "times": [{"starting_time": 1552477202995, "ending_time": 1552477203095, "color":c1(4)}, {"starting_time": 1552477203095, "ending_time": 1552477206747, "color":c2(4), "label": "8.3s \/ 3.5 GB"}, {"starting_time": 1552477206747, "ending_time": 1552477211333, "color":c1(4)}]},
+{"label": "bwa_index", "times": [{"starting_time": 1552477210312, "ending_time": 1552477210400, "color":c1(5)}, {"starting_time": 1552477210400, "ending_time": 1552477210522, "color":c2(5), "label": "691ms \/ 0"}, {"starting_time": 1552477210522, "ending_time": 1552477211003, "color":c1(5)}]},
+{"label": "fastqc_trimmed (ACBarrie)", "times": [{"starting_time": 1552477211011, "ending_time": 1552477211104, "color":c1(6)}, {"starting_time": 1552477211104, "ending_time": 1552477224351, "color":c2(6), "label": "17.8s \/ 2.7 GB"}, {"starting_time": 1552477224351, "ending_time": 1552477228837, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Alsen)", "times": [{"starting_time": 1552477211336, "ending_time": 1552477211433, "color":c1(6)}, {"starting_time": 1552477211433, "ending_time": 1552477224323, "color":c2(6), "label": "17.8s \/ 2.7 GB"}, {"starting_time": 1552477224323, "ending_time": 1552477229116, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Chara)", "times": [{"starting_time": 1552477228844, "ending_time": 1552477228937, "color":c1(6)}, {"starting_time": 1552477228937, "ending_time": 1552477240585, "color":c2(6), "label": "13s \/ 2.7 GB"}, {"starting_time": 1552477240585, "ending_time": 1552477241828, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Baxter)", "times": [{"starting_time": 1552477229121, "ending_time": 1552477229216, "color":c1(6)}, {"starting_time": 1552477229216, "ending_time": 1552477239520, "color":c2(6), "label": "12.8s \/ 2.7 GB"}, {"starting_time": 1552477239520, "ending_time": 1552477241968, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Drysdale)", "times": [{"starting_time": 1552477241830, "ending_time": 1552477241929, "color":c1(6)}, {"starting_time": 1552477241929, "ending_time": 1552477252446, "color":c2(6), "label": "12.7s \/ 2.7 GB"}, {"starting_time": 1552477252446, "ending_time": 1552477254482, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Gladius)", "times": [{"starting_time": 1552477241974, "ending_time": 1552477242123, "color":c1(6)}, {"starting_time": 1552477242123, "ending_time": 1552477251421, "color":c2(6), "label": "12.6s \/ 2.7 GB"}, {"starting_time": 1552477251421, "ending_time": 1552477254535, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Excalibur)", "times": [{"starting_time": 1552477254487, "ending_time": 1552477254549, "color":c1(6)}, {"starting_time": 1552477254549, "ending_time": 1552477267231, "color":c2(6), "label": "13.7s \/ 2.7 GB"}, {"starting_time": 1552477267231, "ending_time": 1552477268229, "color":c1(6)}]},
+{"label": "fastqc_trimmed (H45)", "times": [{"starting_time": 1552477254541, "ending_time": 1552477254635, "color":c1(6)}, {"starting_time": 1552477254635, "ending_time": 1552477268238, "color":c2(6), "label": "19.1s \/ 2.7 GB"}, {"starting_time": 1552477268238, "ending_time": 1552477273667, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Pastor)", "times": [{"starting_time": 1552477268238, "ending_time": 1552477268335, "color":c1(6)}, {"starting_time": 1552477268335, "ending_time": 1552477280284, "color":c2(6), "label": "17.7s \/ 2.7 GB"}, {"starting_time": 1552477280284, "ending_time": 1552477285975, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Kukri)", "times": [{"starting_time": 1552477273706, "ending_time": 1552477273867, "color":c1(6)}, {"starting_time": 1552477273867, "ending_time": 1552477285755, "color":c2(6), "label": "13.4s \/ 2.7 GB"}, {"starting_time": 1552477285755, "ending_time": 1552477287097, "color":c1(6)}]},
+{"label": "fastqc_trimmed (RAC875)", "times": [{"starting_time": 1552477285985, "ending_time": 1552477286075, "color":c1(6)}, {"starting_time": 1552477286075, "ending_time": 1552477297442, "color":c2(6), "label": "12.4s \/ 2.7 GB"}, {"starting_time": 1552477297442, "ending_time": 1552477298344, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Volcanii)", "times": [{"starting_time": 1552477287109, "ending_time": 1552477287197, "color":c1(6)}, {"starting_time": 1552477287197, "ending_time": 1552477300052, "color":c2(6), "label": "18.2s \/ 2.7 GB"}, {"starting_time": 1552477300052, "ending_time": 1552477305311, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Xiaoyan)", "times": [{"starting_time": 1552477298355, "ending_time": 1552477298445, "color":c1(6)}, {"starting_time": 1552477298445, "ending_time": 1552477307868, "color":c2(6), "label": "12.6s \/ 2.7 GB"}, {"starting_time": 1552477307868, "ending_time": 1552477310931, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Westonia)", "times": [{"starting_time": 1552477305403, "ending_time": 1552477305412, "color":c1(6)}, {"starting_time": 1552477305412, "ending_time": 1552477315751, "color":c2(6), "label": "13.5s \/ 2.7 GB"}, {"starting_time": 1552477315751, "ending_time": 1552477318921, "color":c1(6)}]},
+{"label": "fastqc_trimmed (Yitpi)", "times": [{"starting_time": 1552477310935, "ending_time": 1552477311032, "color":c1(6)}, {"starting_time": 1552477311032, "ending_time": 1552477324629, "color":c2(6), "label": "18.4s \/ 2.7 GB"}, {"starting_time": 1552477324629, "ending_time": 1552477329370, "color":c1(6)}]},
+{"label": "multiqc_raw", "times": [{"starting_time": 1552477319926, "ending_time": 1552477320021, "color":c1(7)}, {"starting_time": 1552477320021, "ending_time": 1552477335984, "color":c2(7), "label": "20.6s \/ 239.8 MB"}, {"starting_time": 1552477335984, "ending_time": 1552477340562, "color":c1(7)}]},
+{"label": "bwa_mem (ACBarrie)", "times": [{"starting_time": 1552477329375, "ending_time": 1552477329470, "color":c1(8)}, {"starting_time": 1552477329470, "ending_time": 1552477329859, "color":c2(8), "label": "856ms \/ 208.9 MB"}, {"starting_time": 1552477329859, "ending_time": 1552477330231, "color":c1(8)}]},
+{"label": "bwa_mem (Chara)", "times": [{"starting_time": 1552477330237, "ending_time": 1552477330331, "color":c1(8)}, {"starting_time": 1552477330331, "ending_time": 1552477330808, "color":c2(8), "label": "1.5s \/ 209.1 MB"}, {"starting_time": 1552477330808, "ending_time": 1552477331710, "color":c1(8)}]},
+{"label": "bwa_mem (Alsen)", "times": [{"starting_time": 1552477331723, "ending_time": 1552477331810, "color":c1(8)}, {"starting_time": 1552477331810, "ending_time": 1552477332101, "color":c2(8), "label": "1s \/ 19.2 MB"}, {"starting_time": 1552477332101, "ending_time": 1552477332764, "color":c1(8)}]},
+{"label": "bwa_mem (Drysdale)", "times": [{"starting_time": 1552477332770, "ending_time": 1552477332865, "color":c1(8)}, {"starting_time": 1552477332865, "ending_time": 1552477333361, "color":c2(8), "label": "1.5s \/ 183.7 MB"}, {"starting_time": 1552477333361, "ending_time": 1552477334279, "color":c1(8)}]},
+{"label": "bwa_mem (Gladius)", "times": [{"starting_time": 1552477334287, "ending_time": 1552477334379, "color":c1(8)}, {"starting_time": 1552477334379, "ending_time": 1552477335058, "color":c2(8), "label": "2.1s \/ 183.7 MB"}, {"starting_time": 1552477335058, "ending_time": 1552477336343, "color":c1(8)}]},
+{"label": "bwa_mem (Excalibur)", "times": [{"starting_time": 1552477336355, "ending_time": 1552477336446, "color":c1(8)}, {"starting_time": 1552477336446, "ending_time": 1552477336841, "color":c2(8), "label": "1.6s \/ 19.2 MB"}, {"starting_time": 1552477336841, "ending_time": 1552477337924, "color":c1(8)}]},
+{"label": "bwa_mem (H45)", "times": [{"starting_time": 1552477337932, "ending_time": 1552477338024, "color":c1(8)}, {"starting_time": 1552477338024, "ending_time": 1552477338357, "color":c2(8), "label": "949ms \/ 207.9 MB"}, {"starting_time": 1552477338357, "ending_time": 1552477338881, "color":c1(8)}]},
+{"label": "bwa_mem (Pastor)", "times": [{"starting_time": 1552477338893, "ending_time": 1552477338982, "color":c1(8)}, {"starting_time": 1552477338982, "ending_time": 1552477339332, "color":c2(8), "label": "819ms \/ 207.7 MB"}, {"starting_time": 1552477339332, "ending_time": 1552477339712, "color":c1(8)}]},
+{"label": "bwa_mem (Baxter)", "times": [{"starting_time": 1552477339722, "ending_time": 1552477339813, "color":c1(8)}, {"starting_time": 1552477339813, "ending_time": 1552477340367, "color":c2(8), "label": "1.1s \/ 271.9 MB"}, {"starting_time": 1552477340367, "ending_time": 1552477340860, "color":c1(8)}]},
+{"label": "bwa_mem (Kukri)", "times": [{"starting_time": 1552477340566, "ending_time": 1552477340662, "color":c1(8)}, {"starting_time": 1552477340662, "ending_time": 1552477341124, "color":c2(8), "label": "1.2s \/ 271.7 MB"}, {"starting_time": 1552477341124, "ending_time": 1552477341796, "color":c1(8)}]},
+{"label": "bwa_mem (RAC875)", "times": [{"starting_time": 1552477340869, "ending_time": 1552477340960, "color":c1(8)}, {"starting_time": 1552477340960, "ending_time": 1552477341693, "color":c2(8), "label": "1.7s \/ 208.3 MB"}, {"starting_time": 1552477341693, "ending_time": 1552477342526, "color":c1(8)}]},
+{"label": "bwa_mem (Xiaoyan)", "times": [{"starting_time": 1552477341815, "ending_time": 1552477341896, "color":c1(8)}, {"starting_time": 1552477341896, "ending_time": 1552477342383, "color":c2(8), "label": "1.3s \/ 183.5 MB"}, {"starting_time": 1552477342383, "ending_time": 1552477343136, "color":c1(8)}]},
+{"label": "bwa_mem (Westonia)", "times": [{"starting_time": 1552477342541, "ending_time": 1552477342626, "color":c1(8)}, {"starting_time": 1552477342626, "ending_time": 1552477343266, "color":c2(8), "label": "1.5s \/ 271.9 MB"}, {"starting_time": 1552477343266, "ending_time": 1552477344023, "color":c1(8)}]},
+{"label": "bwa_mem (Yitpi)", "times": [{"starting_time": 1552477343158, "ending_time": 1552477343237, "color":c1(8)}, {"starting_time": 1552477343237, "ending_time": 1552477343752, "color":c2(8), "label": "1.3s \/ 209.1 MB"}, {"starting_time": 1552477343752, "ending_time": 1552477344459, "color":c1(8)}]},
+{"label": "bwa_mem (Volcanii)", "times": [{"starting_time": 1552477344040, "ending_time": 1552477344123, "color":c1(8)}, {"starting_time": 1552477344123, "ending_time": 1552477344583, "color":c2(8), "label": "1.1s \/ 208.7 MB"}, {"starting_time": 1552477344583, "ending_time": 1552477345172, "color":c1(8)}]},
+{"label": "fastqc_trimmed (Wyalkatchem)", "times": [{"starting_time": 1552477344480, "ending_time": 1552477344559, "color":c1(6)}, {"starting_time": 1552477344559, "ending_time": 1552477350967, "color":c2(6), "label": "7.3s \/ 2.7 GB"}, {"starting_time": 1552477350967, "ending_time": 1552477351805, "color":c1(6)}]},
+{"label": "bwa_mem (Wyalkatchem)", "times": [{"starting_time": 1552477345175, "ending_time": 1552477345273, "color":c1(8)}, {"starting_time": 1552477345273, "ending_time": 1552477346114, "color":c2(8), "label": "1.9s \/ 272.4 MB"}, {"starting_time": 1552477346114, "ending_time": 1552477347060, "color":c1(8)}]},
+{"label": "multiqc_trimmed", "times": [{"starting_time": 1552477351840, "ending_time": 1552477351905, "color":c1(9)}, {"starting_time": 1552477351905, "ending_time": 1552477360197, "color":c2(9), "label": "11.1s \/ 226.5 MB"}, {"starting_time": 1552477360197, "ending_time": 1552477362926, "color":c1(9)}]}
+]
+
+
+function getTickFormat() {
+  var MIN = 1000 * 60
+  var HOUR = MIN * 60
+  var DAY = HOUR * 24
+  var delta = (endingMillis - beginningMillis)
+
+  if( delta < 2 * MIN ) {
+    return {
+      format: d3.time.format("%S"),
+      tickTime: d3.time.seconds,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * HOUR ) {
+    return {
+      format: d3.time.format("%M"),
+      tickTime: d3.time.minutes,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * DAY ) {
+    return {
+      format: d3.time.format("%H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 1,
+      tickSize: 6
+    }
+  }
+
+  if( delta <= 7 * DAY ) {
+    return {
+      format: d3.time.format("%b %e %H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 6,
+      tickSize: 6
+    }
+  }
+
+  return {
+    format: d3.time.format("%b %e"),
+    tickTime: d3.time.days,
+    tickInterval: 1,
+    tickSize: 6
+  }
+}
+
+function getLabelMargin(scale) {
+    $('<span class="labelSpan" style="display: none"></span>').appendTo('body');
+
+    var labelMargin = 0
+    $.each(data, function (key, value) {
+      labelMargin = Math.max(labelMargin, $('.labelSpan').html(value.label).width());
+    });
+
+    $('.labelSpan').remove();
+
+    return (labelMargin * scale);
+}
+
+function render() {
+  handler=null;
+  $("#timeline").empty()
+  $('#label_elapsed').text(elapsed)
+  $('#label_launch').text( d3.time.format('%d %b %Y %H:%M')(new Date(beginningMillis)) )
+
+  var width = $(window).width();
+  var chart = d3.timeline()
+    .stack() // toggles graph stacking
+    .margin({left:getLabelMargin(0.85), right:100, top:0, bottom:0})
+    .tickFormat( getTickFormat() )
+    .rowSeperators('#f5f5f5')
+    .showTimeAxisTick()
+    ;
+  var svg = d3.select("#timeline").append("svg").attr("width", width).datum(data).call(chart);
+}
+
+function hrz() {
+if( handler != null ) clearTimeout(handler)
+  handler = setTimeout(render, 150);
+}
+
+$(document).ready(render)
+$(window).resize(hrz); // resize the applet on window resize
+</script>
+</head>
+
+<body>
+<div>
+  <h3>Processes execution timeline</h3>
+  <p>
+    Launch time: <span id='label_launch'> </span><br>
+    Elapsed time: <span id='label_elapsed'> </span>
+  </p>
+  <div id="timeline"></div>
+</div>
+
+<div id='footer'>
+  Created with Nextflow -- <a href='http://www.nextflow.io' target='_blank'>http://nextflow.io</a>
+</div>
+
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Clink href='" + prot + "fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css' %3E%3C/link%3E"));
+</script>
+</body>
+</html>

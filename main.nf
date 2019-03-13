@@ -14,6 +14,7 @@ process download_chromosome {
   tag { params.ref.chr }
 
   //Prevent re-downloading of large files
+  // storeDir { executor == 'awsbatch' ? null : "${params.outdir}/downloaded" }  //use with care, caching will not work as normal so changes to input may not take effect
   storeDir { "${params.outdir}/downloaded" }  //use with care, caching will not work as normal so changes to input may not take effect
   scratch false //must be false otherwise storeDir ignored
 
