@@ -375,7 +375,7 @@ cat ../main.nf
 Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233197](https://asciinema.org/a/233197)
 </small>
 
-<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="false" data-size="medium" data-rows="40">
+<script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="false" data-size="small" data-rows="40">
 
 </script>
 
