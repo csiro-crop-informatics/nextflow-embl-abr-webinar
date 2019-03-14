@@ -379,6 +379,24 @@ nextflow run ../main.nf -profile docker -resume
 
 ----
 
+## The work directory (1/2)
+
+```{bash, comment='', cache=FALSE}
+tree -L 2 work
+```
+
+----
+
+## The work directory (2/2)
+
+
+```{bash, comment='', cache=FALSE}
+tree -ah work
+```
+
+
+----
+
 ## [Example workflow run](https://asciinema.org/a/233197)
 
 <small>
@@ -396,22 +414,6 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 
 
 
-----
-
-## The work directory (1/2)
-
-```{bash, comment='', cache=FALSE}
-tree -L 2 work
-```
-
-----
-
-## The work directory (2/2)
-
-
-```{bash, comment='', cache=FALSE}
-tree -ah work
-```
 
 ----
 
