@@ -369,6 +369,16 @@ cat ../main.nf
 
 ----
 
+## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
+
+
+```{bash, comment=''}
+nextflow run ../main.nf -profile docker -resume
+```
+
+
+----
+
 ## [Example workflow run](https://asciinema.org/a/233197)
 
 <small>
@@ -383,16 +393,6 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 <!-- [![asciicast](https://asciinema.org/a/233197.svg)](https://asciinema.org/a/233197) -->
 
 <!-- data-cols="200" data-rows="50"  -->
-
-
-----
-
-## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
-
-
-```{bash, comment=''}
-nextflow run ../main.nf -profile docker -resume
-```
 
 
 
