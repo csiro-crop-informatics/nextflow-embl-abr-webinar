@@ -44,7 +44,9 @@ It probably makes sense to move the executable to a [directory accessible via `$
   [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
 
 
-  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar) 
+  [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar) 
+  [![Docker Cloud build](https://img.shields.io/docker/cloud/build/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar) 
 
 
 ## Nextflow version required (only if using ansi logging)
