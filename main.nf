@@ -14,7 +14,6 @@ process download_chromosome {
   tag { params.ref.chr }
 
   //Prevent re-downloading of large files
-  // storeDir { executor == 'awsbatch' ? null : "${params.outdir}/downloaded" }  //use with care, caching will not work as normal so changes to input may not take effect
   storeDir { "${params.outdir}/downloaded" }  //use with care, caching will not work as normal so changes to input may not take effect
   scratch false //must be false otherwise storeDir ignored
 
@@ -65,6 +64,7 @@ process bgzip_chromosome_subregion {
 
 process extract_reads {
   tag { accession }
+  storeDir { "${params.outdir}/downloaded_reads" }  //use with care, caching will not work as normal so changes to input may not take effect
 
   input:
     val accession from accessionsChannel
@@ -72,15 +72,17 @@ process extract_reads {
 
   output:
     set val(accession), file('*.fastq.gz') into (extractedReadsChannelA, extractedReadsChannelB)
-    //e.g. ACBarrie.realigned.bam.bai, ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz
+    //e.g. ACBarrie, [ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz]
 
   script:
   """
-  samtools view -hu "${params.bam.base_url}/chr4A_part2/${accession}.realigned.bam" \
+  samtools view -hu "${params.bam.base_url}/${params.bam.chr}/${accession}.realigned.bam" \
     ${params.bam.chr}:${params.bam.start}-${params.bam.end} \
   | samtools collate -uO - \
   | samtools fastq -F 0x900 -1 ${accession}_R1.fastq.gz -2 ${accession}_R2.fastq.gz \
-    -s /dev/null -0 /dev/null -
+    -s /dev/null -0 /dev/null - \
+  && zcat ${accession}_R1.fastq.gz | head | awk 'END{exit(NR<4)}' \
+  && zcat ${accession}_R2.fastq.gz | head | awk 'END{exit(NR<4)}'
   """
 }
 

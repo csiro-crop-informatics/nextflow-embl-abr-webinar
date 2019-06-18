@@ -3,7 +3,7 @@ title: "Nextflow"
 author:
 - Rad Suchecki (CSIRO)
 subtitle: "Scalable, Sharable and Reproducible Computational Workflows across Clouds and Clusters"
-date: "<center> EMBL-ABR webinar <br/> `r format(Sys.time(), '%A, %d %B, %Y')` </center>"
+# date: "<center> EMBL-ABR webinar <br/> `r format(Sys.time(), '%A, %d %B, %Y')` </center>"
 # tags: [one, another]
 output:
   #pdf_document:
@@ -114,45 +114,60 @@ knitr::opts_chunk$set(cache=TRUE)
 
 
 <div class="column-right">
+<br />
+
 * version controlled
 * container-backed
 * seamless execution across different environments (if computationally feasible)
-    * laptop
-    * server
-    * cluster
-    * cloud
+    * laptop/server/cluster/cloud
 * sharable
   * effort required for someone else to use it
 </div>
 
 ----
 
-### Choosing a workflow system
-
-* [~~214~~ 239 systems and counting](https://s.apache.org/existing-workflow-systems)
-  * from `make` to Galaxy
-* Additional considerations
-  * active development?
-  * (community) support?
-  * flexibility and ease of development
-  * learning curve
-  * abstraction level
-
-----
 
 ## [Nextflow](https://www.nextflow.io/)
 
+<br />
+
 * Reactive workflow framework
 * Domain specific programming language
+* Aimed at bioinformaticians familiar with programming
 
 <br/>
 
 * Designed for seamless scalability of existing tools and scripts
-* Aimed at bioinformaticians familiar with programming
+  * Implicitly parallelized, asynchronous data streams
+* Separation of pipeline logic from the definitions of
+  * software environment (on `$PATH`, modules, binaries, conda, containers)
+  * execution environment (laptop, server, cluster, cloud)
+
 
 <small>
 [https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
 </small>
+
+<!-- ----
+
+
+## [Nextflow](https://www.nextflow.io/)
+
+
+* Implicitly parallelized, asynchronous data streams
+* Separation of pipeline logic from the definitions of
+  * software environment (on `$PATH`, modules, binaries, conda, containers)
+  * execution environment (laptop, server, HPC cluster, cloud)
+
+* Out-of-the-box support for
+  * SGE, LSF, **SLURM**, PBS/Torque, NQSII HTCondor, **Ignite**, Kubernets, **Amazon Cloud**, **AWS Batch**, Google Cloud
+* Integration with git hosting services
+
+<small>
+[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
+</small>
+-->
+
 
 
 ----
@@ -164,38 +179,10 @@ Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-int
 </small>
 
 
-----
-
-
-## [Nextflow](https://www.nextflow.io/)
-
-
-* Implicitly parallelized, asynchronous data streams
-* Separation of pipeline logic from the definitions of
-  * software environment (on `$PATH`, modules, binaries, conda, containers)
-  * execution environment (laptop, server, HPC cluster, cloud)
-* Out-of-the-box support for
-  * SGE, LSF, **SLURM**, PBS/Torque, NQSII HTCondor, **Ignite**, Kubernets, **Amazon Cloud**, **AWS Batch**, Google Cloud
-* Integration with git hosting services
-
-<small>
-[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
-</small>
-
 
 ----
 
 ## Nextflow building blocks
-<!--
-<div class="column-left">
-![](figs/floden2.png){width=80%}
-<small>
-Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-introduction-to-nextflow?slide=15)
-</small>
-</div>
-
-
-<div class="column-right"> -->
 
 ### *Processes* (1-to-many tasks)
 
@@ -208,13 +195,11 @@ Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-int
 
   * facilitate data flow between processes by linking their outputs/inputs
   * a suite of [operators](https://www.nextflow.io/docs/latest/operator.html) applied to channels to shape the data flow
-    * filtering
-    * transforming
-    * forking
-    * combining
-    * ...and more
+    * filtering, transforming, forking, combining...
 
-<!-- </div> -->
+<small>
+[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
+</small>
 
 ----
 
@@ -287,7 +272,7 @@ Alternatives
 
 ```{bash, eval=FALSE}
 nextflow run nextflow-io/hello #more explicit pointer to organisation/repo (or user/repo) on GitHub
-nextflow run main.nf #local exec after download
+nextflow run main.nf #local exec after download/clone
 ```
 
 
@@ -316,25 +301,31 @@ nextflow run hello -r v1.1
 
 ## Command line syntax basics
 
-* Single dash for Nextflow params
+* Single dash (`-`) for Nextflow params
 ```{bash, eval=FALSE}
-nextflow run main.nf -with-dag mydag.png -with-docker
+nextflow run main.nf -with-dag mydag.png -with-docker -resume
 ```
 
-* Double dash for pipeline params (defined by you)
+<small>
+`-resume` prevents re-running of tasks when relevant inputs/scripts unchanged
+</small>
+
+* Double dash (`--`) for pipeline params (defined by you)
 ```{bash, eval=FALSE}
-nextflow run main.nf --input sample.fastq.gz
+nextflow run main.nf --input sample.fastq.gz --foo bar
 ```
+
+
+<small>
+Filename `sample.fastq.gz` will be available to NF under `params.input`, similarly the value `bar` will be accessible under `params.foo`.
+</small>
 
 * Many params can also be set via [environmental variables](https://www.nextflow.io/docs/latest/config.html#environment-variables)
 ```{bash, eval=FALSE}
 NXF_VER=19.01.0 nextflow run main.nf
 ```
 
-* Resuming - note the single dash(!)
-```{bash, eval=FALSE}
-nextflow run main.nf -resume
-```
+
 
 ----
 
@@ -361,7 +352,7 @@ dot -Tpng -Gsize=9,7\! -Gdpi=100 -ofigs/flowchart_small.png flowinfo/flowchart.d
 ## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
 
 
-```{bash, comment='', echo = TRUE}
+```{bash, comment='', cache = FALSE, echo = TRUE}
 cat ../main.nf
 ```
 
@@ -372,8 +363,12 @@ cat ../main.nf
 ## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
 
 
+<!-- ```{bash, echo=FALSE, include=FALSE}
+export NXF_VER=19.01.0
+``` -->
+
 ```{bash, comment=''}
-nextflow run ../main.nf -profile docker -resume
+nextflow run ../main.nf -profile docker -ansi-log false
 ```
 
 
@@ -442,13 +437,12 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 process extract_reads {
   executor 'slurm'
   module 'samtools/1.9'
-  ...
 ```
 
 * Usually preferred to define these in [`nextflow.config`](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/blob/master/nextflow.config) *et al.*
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
-curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/nextflow.config
+cat ../nextflow.config
 ```
 
 
@@ -477,7 +471,7 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch 
 * Global software env for the workflow
 * Separate software envs for individual processes or subsets
 * A bit of both
-* For the example workflow we have
+* Our example workflow:
   * global Conda env -> Docker -> Singularity
 
 ----
@@ -503,7 +497,7 @@ nextflow run csiro-crop-informatics/nextflow-embl-abr-webinar -profile awsbatch 
   * [`conf/conda.yaml`](https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/conda.yaml)
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
-curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/conda.yaml
+cat ../conf/conda.yaml
 ```
 
 * Conda profile defined in [`nextflow.config`](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/blob/master/nextflow.config)
@@ -529,7 +523,7 @@ profiles {
 * Dockerfile
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
-curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Dockerfile
+cat ../Dockerfile
 ```
 
 * Docker profile defined in [`nextflow.config`](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/blob/master/nextflow.config)
@@ -558,18 +552,15 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
   * Singularity recipe
 
 ```{bash, comment='', cache=FALSE, echo=FALSE}
-curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/Singularity
+cat ../Singularity
 ```
 * Singularity profile defined in [`nextflow.config`](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar/blob/master/nextflow.config)
 ```
   singularity {
+    process.container = 'shub://csiro-crop-informatics/nextflow-embl-abr-webinar' //Singularity hub
     singularity {
       enabled = true
       autoMounts = true
-    }
-    process {
-      container = 'shub://csiro-crop-informatics/nextflow-embl-abr-webinar' //Singularity hub
-      scratch = true //This is a hack - currently required as a workaround for https://github.com/sylabs/singularity/issues/1469#issuecomment-469129088
     }
   }
 ```
@@ -586,7 +577,7 @@ curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-
 
 
 ```{bash, comment='', cache=FALSE}
-curl -sL https://raw.githubusercontent.com/csiro-crop-informatics/nextflow-embl-abr-webinar/master/conf/publish.config
+cat ../conf/publish.config
 ```
 
 ----
@@ -631,7 +622,7 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 
 
 * [https://www.nextflow.io/](https://www.nextflow.io/)
-* [https://github.com/nextflow-io/patterns](https://github.com/nextflow-io/patterns)
+* [https://github.com/nextflow-io/patterns](http://nextflow-io.github.io/patterns/)
 * [Nextflow Gitter](https://gitter.im/nextflow-io/nextflow)
 * [https://github.com/nextflow-io/awesome-nextflow](https://github.com/nextflow-io/awesome-nextflow)
 * [http://nf-co.re/](http://nf-co.re/) - check it out before implementing something
