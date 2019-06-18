@@ -254,8 +254,13 @@ curl -sL  https://raw.githubusercontent.com/nextflow-io/hello/master/main.nf
 
 ## Hello world run
 
+```{bash, comment='', eval = FALSE}
+nextflow run hello
+```
 
-```{bash, comment=''}
+```{bash, comment='', echo = FALSE}
+#specific version for this webinar
+NXF_VER=19.01.0 \
 nextflow run hello
 ```
 
@@ -291,7 +296,12 @@ nextflow run hello -r 451ebd9
 nextflow run hello -r mybranch
 ```
 
-```{bash, comment=''}
+```{bash, comment='', eval=FALSE}
+nextflow run hello -r v1.1
+```
+
+```{bash, comment='', echo=FALSE}
+NXF_VER=19.01.0 \
 nextflow run hello -r v1.1
 ```
 
@@ -317,7 +327,7 @@ nextflow run main.nf --input sample.fastq.gz --foo bar
 
 
 <small>
-Filename `sample.fastq.gz` will be available to NF under `params.input`, similarly the value `bar` will be accessible under `params.foo`.
+Filename `sample.fastq.gz` will be available to NF under `params.input`.
 </small>
 
 * Many params can also be set via [environmental variables](https://www.nextflow.io/docs/latest/config.html#environment-variables)
@@ -363,12 +373,12 @@ cat ../main.nf
 ## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
 
 
-<!-- ```{bash, echo=FALSE, include=FALSE}
-export NXF_VER=19.01.0
-``` -->
+```{bash, comment='', eval = FALSE}
+nextflow run ../main.nf -profile docker
+```
 
-```{bash, comment=''}
-nextflow run ../main.nf -profile docker -ansi-log false
+```{bash, comment='', echo = FALSE}
+NXF_VER=19.01.0 nextflow run ../main.nf -profile docker
 ```
 
 

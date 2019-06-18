@@ -1,14 +1,14 @@
 This workflow re-implements in Nextflow the logic of the Snakemake workflow presented in [this webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar#data-for-the-webinar) using the same data sets.
 
 
-- [Nextflow installation](#nextflow-installation)
-- [Software environment](#software-environment)
-- [Nextflow version required (only if using ansi logging)](#nextflow-version-required-only-if-using-ansi-logging)
-- [Running the example pipeline](#running-the-example-pipeline)
-  - [Local/server profiles](#localserver-profiles)
-  - [HPC (SLURM) profiles](#hpc-slurm-profiles)
-  - [Cloud profile](#cloud-profile)
-- [Contributing](#contributing)
+- [Nextflow installation](#Nextflow-installation)
+- [Software environment](#Software-environment)
+- [Nextflow version](#Nextflow-version)
+- [Running the example pipeline](#Running-the-example-pipeline)
+  - [Local/server profiles](#Localserver-profiles)
+  - [HPC (SLURM) profiles](#HPC-SLURM-profiles)
+  - [Cloud profile](#Cloud-profile)
+- [Contributing](#Contributing)
 
 ##  Nextflow installation
 
@@ -33,6 +33,7 @@ This will place the executable in your working directory and you should be able 
 
 It probably makes sense to move the executable to a [directory accessible via `$PATH`](https://askubuntu.com/questions/60218/how-to-add-a-directory-to-the-path), just to be able to run `nextflow` rather than having to remember to type the full path to nextflow each time you want to run it.
 
+For consistency of how nextflow output is presented in the terminal, you should use the specific version of nextflow, e.g. `NXF_VER=19.01.0 nextflow run ...`. Alternatively, use `-ansi-log false` with later versions of nextflow.
 
 
 ## Software environment
@@ -44,14 +45,14 @@ It probably makes sense to move the executable to a [directory accessible via `$
   [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
 
 
-  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar) 
-  [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar) 
-  [![Docker Cloud build](https://img.shields.io/docker/cloud/build/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar) 
+  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+  [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+  [![Docker Cloud build](https://img.shields.io/docker/cloud/build/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
 
 
-## Nextflow version required (only if using ansi logging)
+## Nextflow version
 
-[![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.02.0--edge-orange.svg)](https://www.nextflow.io/)
+ [![Nextflow](https://img.shields.io/badge/nextflow-19.01.0-orange.svg)](https://www.nextflow.io/)
 
 
 ## Running the example pipeline
