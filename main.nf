@@ -64,14 +64,14 @@ process bgzip_chromosome_subregion {
 
 process extract_reads {
   tag { accession }
-  storeDir { "${params.outdir}/downloaded_reads" }  //use with care, caching will not work as normal so changes to input may not take effect
+  storeDir { "${workDir}/downloaded_reads" }  //use with care, caching will not work as normal so changes to input may not take effect
 
   input:
     val accession from accessionsChannel
     //e.g. ACBarrie
 
   output:
-    set val(accession), file('*.fastq.gz') into (extractedReadsChannelA, extractedReadsChannelB)
+    set val(accession), file("${accession}_R?.fastq.gz") into (extractedReadsChannelA, extractedReadsChannelB)
     //e.g. ACBarrie, [ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz]
 
   script:
