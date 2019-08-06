@@ -1,26 +1,111 @@
-# Nextflow: Scalable, Sharable and Reproducible Computational Workflows across Clouds and Clusters (EMBL-ABR Nextflow webinar)
 
-**Abstract:**
-Large analysis workflows are fragile ecosystems of software tools, scripts and dependencies. This complexity commonly makes these workflows not only irreproducible but sometimes even not re-runnable outside their original development environment. Nextflow is a reactive workflow framework and a domain specific programming language which follows the dataflow paradigm and offers an alternative, and arguably superior, approach to developing, executing and sharing pipelines.
 
-In this webinar we will follow the steps required for developing sharable, version controlled, container-backed workflows, which can be seamlessly executed across different environments from a laptop to cluster to cloud. We will do this by leveraging Nextflow’s integration with code and container image hosting services such as GitHub and Docker Hub, and out of the box support for various HPC cluster schedulers and the Amazon AWS cloud.
+- [Nextflow installation](#nextflow-installation)
+- [Software environment](#software-environment)
+- [Nextflow version](#nextflow-version)
+- [Running the example pipeline](#running-the-example-pipeline)
+- [Execution profiles](#execution-profiles)
+  - [Local/server profiles](#localserver-profiles)
+  - [HPC (SLURM) profiles](#hpc-slurm-profiles)
+- [Running with pre-configured software environment](#running-with-pre-configured-software-environment)
+- [Other runtime parameters](#other-runtime-parameters)
 
-**Date/time:** Thursday 14 March 2019 13:00-14:00 AEDT /12:00-13:00 AEST
+##  Nextflow installation
 
-**Presenter:** [Rad Suchecki](https://orcid.org/0000-0003-4992-9497), CSIRO
+Check if you have Java 8 or newer (`java -version`, should be 1.8 or newer), and if you do, run
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/bioinforad.svg?style=social)](https://twitter.com/bioinforad)
+```
+curl -s https://get.nextflow.io | bash
+```
 
-**Registration:** ~~https://attendee.gotowebinar.com/register/8408436403729692931~~
+This will place the executable in your working directory and you should be able to run it
 
-# Slides
+```
+./nextflow
+```
 
-https://csiro-crop-informatics.github.io/nextflow-embl-abr-webinar/nextflow-embl-abr.html
+It probably makes sense to move the executable to a [directory accessible via `$PATH`](https://askubuntu.com/questions/60218/how-to-add-a-directory-to-the-path), just to be able to run `nextflow` rather than having to remember to type the full path to nextflow each time you want to run it.
 
-# Data for the Webinar
+Depending on the system this may suffice:
 
-For the purpose of demonstrating a Nextflow workflow in reasonable time, we will use the dataset used in [this Snakemake webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar#data-for-the-webinar).
+```
+mkdir -p ~/bin
+mv ./nextflow ~/bin
+```
 
-# Tutorial
+For consistency of how nextflow output is presented in the terminal, you should use the specific version of nextflow, e.g. `NXF_VER=19.01.0 nextflow run ...`. Alternatively, use `-ansi-log false` with later versions of nextflow.
 
-[nextflow-tutorial.md](nextflow-tutorial.md)
+
+## Software environment
+
+
+* Conda or either one of Docker or Singularity to run the appropriate container with all the remaining required software.
+
+
+  [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
+
+
+  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+  [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+  [![Docker Cloud build](https://img.shields.io/docker/cloud/build/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+
+
+## Nextflow version
+
+ [![Nextflow](https://img.shields.io/badge/nextflow-19.01.0-orange.svg)](https://www.nextflow.io/)
+
+
+## Running the example pipeline
+
+Altough not strictly necessary for running the pipeline, it makes sense
+to start by cloning this repo and moving to the dir
+
+```
+git clone ...
+cd ...
+```
+
+## Execution profiles
+
+The intended use is with one of the execution profiles defined in [nextflow.config](nextflow.config). Profiles define
+* how we access the software environment
+* what compute environment is used
+
+### Local/server profiles
+
+```
+nextflow run main.nf -profile conda
+nextflow run main.nf -profile docker
+nextflow run main.nf -profile singularity
+```
+
+
+### HPC (SLURM) profiles
+
+```
+nextflow run main.nf -profile slurm,conda
+nextflow run main.nf -profile slurm,singularity,
+```
+
+## Running with pre-configured software environment
+
+If you happen to already have all the required tools installed (available on `$PATH`), you should be able to simply run
+
+
+```
+nextflow run main.nf
+```
+
+or
+
+
+```
+nextflow run main.nf -profile slurm
+```
+
+## Other runtime parameters
+
+* By default, only one of the 16 wheat accessions will be processed. To process a subset of say, 5 use `--take 5` or to process all use `--take all`.
+
+
+

@@ -1,70 +1,50 @@
 #!/usr/bin/env nextflow
 
-//Build link to reference
-referenceLink = params.ref.base_url + params.ref.chr + ".fsa.zip"
-
 //Take accessions defined in nextflow.config.
 //Use --take N to process first N accessions or --take all to process all
 accessionsChannel = Channel.from(params.accessions).take( params.take == 'all' ? -1 : params.take )
 
+region = "${params.chr}_${params.start}-${params.end}"
+
+//Reference fasta.gz specified in nextflow.config, override with --reference path_or_url.fasta.gz
+reference = Channel.from(params.reference)
+
 //fetch adapters file - either local or remote
-adaptersChannel = Channel.fromPath(params.adapters)
+adaptersChannel = Channel.fromPath(params.adapters) //NF will download if remote
 
-process download_chromosome {
-  tag { params.ref.chr }
 
-  //Prevent re-downloading of large files
-  storeDir { "${params.outdir}/downloaded" }  //use with care, caching will not work as normal so changes to input may not take effect
-  scratch false //must be false otherwise storeDir ignored
 
+process get_reference {
+  tag { "${region}"}
   input:
-    referenceLink
+    val(ref_url) from reference
 
   output:
-    file('*') into references
+    file('*') into referencesChannel
 
   script:
   """
-  wget ${referenceLink}
+  wget ${ref_url}
   """
 }
 
-process bgzip_chromosome {
-  cpus '2' //consider defining in conf/requirements.config based on process name or label
+process bwa_index {
   tag { ref }
-
   input:
-    file ref from references
+    file(ref) from referencesChannel
 
   output:
-    file('*') into chromosomesChannel
+    set val(ref), file("*") into indexChannel //also valid: set val("${ref}"), file("*") into indexChannel
 
   script:
   """
-  unzip -p ${ref} \
-    | bgzip --threads ${task.cpus} \
-    > ${ref}.gz
+  bwa index -a bwtsw ${ref}
   """
 }
 
-process bgzip_chromosome_subregion {
-  input:
-    file chr from chromosomesChannel
 
-  output:
-    file('subregion') into subregionsChannel
-
-  script:
-  """
-  samtools faidx ${chr} ${params.ref.chr}:${params.ref.start}-${params.ref.end} \
-    | bgzip --threads ${task.cpus} \
-    > subregion
-  """
-}
-
-process extract_reads {
-  tag { accession }
-  storeDir { "${workDir}/downloaded_reads" }  //use with care, caching will not work as normal so changes to input may not take effect
+process get_reads {
+  tag { "${accession} @ ${region}"}
 
   input:
     val accession from accessionsChannel
@@ -75,16 +55,14 @@ process extract_reads {
     //e.g. ACBarrie, [ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz]
 
   script:
+  URL_BASE = [params.reads_base_url, region, accession].join('/')
   """
-  samtools view -hu "${params.bam.base_url}/${params.bam.chr}/${accession}.realigned.bam" \
-    ${params.bam.chr}:${params.bam.start}-${params.bam.end} \
-  | samtools collate -uO - \
-  | samtools fastq -F 0x900 -1 ${accession}_R1.fastq.gz -2 ${accession}_R2.fastq.gz \
-    -s /dev/null -0 /dev/null - \
+  wget ${URL_BASE}_${params.r1_suffix} ${URL_BASE}_${params.r2_suffix} \
   && zcat ${accession}_R1.fastq.gz | head | awk 'END{exit(NR<4)}' \
   && zcat ${accession}_R2.fastq.gz | head | awk 'END{exit(NR<4)}'
   """
 }
+
 
 process fastqc_raw {
   tag { accession }
@@ -168,28 +146,33 @@ process multiqc_trimmed {
   """
 }
 
-process bwa_index {
-  input:
-    file(ref) from subregionsChannel
-
-  output:
-    set val(ref.name), file("*") into indexChannel //also valid: set val("${ref}"), file("*") into indexChannel
-
-  script:
-  """
-  bwa index -a bwtsw ${ref}
-  """
-}
-
+// indexChannel.combine(trimmedReadsChannelA).view()
+// [
+//  reference.fasta.gz,
+//  [
+//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.amb,
+//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.ann,
+//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.bwt,
+//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.pac,
+//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.sa
+//  ],
+//  ACBarrie,
+//  [
+//    /home/rad/repos/nextflow-embl-abr-webinar/work/8f/f03aa5c708c5b39d27e6066d3a8338/ACBarrie_R1.paired.fastq.gz,
+//    /home/rad/repos/nextflow-embl-abr-webinar/work/8f/f03aa5c708c5b39d27e6066d3a8338/ACBarrie_R2.paired.fastq.gz]
+// ]
 
 process bwa_mem {
   tag { accession }
 
   input:
-    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
+    // set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
+    // set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
+    set val(accession), file(reads) from trimmedReadsChannelA
+    set val(ref), file(index) from indexChannel
 
-	output:
-		file('*.bam') into alignedReadsChannel
+	// output:
+	// 	file('*.bam') into alignedReadsChannel
 
   script:
   """
