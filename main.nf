@@ -1,35 +1,15 @@
 #!/usr/bin/env nextflow
 
-//Take accessions defined in nextflow.config.
-//Use --take N to process first N accessions or --take all to process all
-accessionsChannel = Channel.from(params.accessions).take( params.take == 'all' ? -1 : params.take )
-
 region = "${params.chr}_${params.start}-${params.end}"
 
-//Reference fasta.gz specified in nextflow.config, override with --reference path_or_url.fasta.gz
-reference_url = params.reference
+referencesChannel = Channel.fromPath("data/${region}/*.fasta.gz")
 
 //fetch adapters file - either local or remote
 adaptersChannel = Channel.fromPath(params.adapters) //NF will download if remote
 
-
-
-process get_reference {
-  tag { "${region}"}
-  input:
-    reference_url
-
-  output:
-    file('*') into referencesChannel
-
-  script:
-  """
-  wget ${reference_url}
-  """
-}
-
-
-
+Channel.fromFilePairs("data/${region}/*_R{1,2}.fastq.gz")
+.take( params.take == 'all' ? -1 : params.take ) //Use --take N to process first N accessions or --take all to process all
+.into { extractedReadsChannelA; extractedReadsChannelB }
 
 process bwa_index {
   tag { ref }
@@ -45,26 +25,6 @@ process bwa_index {
   """
 }
 
-
-process get_reads {
-  tag { "${accession} @ ${region}"}
-
-  input:
-    val accession from accessionsChannel
-    //e.g. ACBarrie
-
-  output:
-    set val(accession), file("${accession}_R?.fastq.gz") into (extractedReadsChannelA, extractedReadsChannelB)
-    //e.g. ACBarrie, [ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz]
-
-  script:
-  URL_BASE = [params.reads_base_url, region, accession].join('/')
-  """
-  wget ${URL_BASE}_${params.r1_suffix} ${URL_BASE}_${params.r2_suffix} \
-  && zcat ${accession}_R1.fastq.gz | head | awk 'END{exit(NR<4)}' \
-  && zcat ${accession}_R2.fastq.gz | head | awk 'END{exit(NR<4)}'
-  """
-}
 
 
 process fastqc_raw {
