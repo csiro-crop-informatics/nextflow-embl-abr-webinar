@@ -7,7 +7,7 @@ accessionsChannel = Channel.from(params.accessions).take( params.take == 'all' ?
 region = "${params.chr}_${params.start}-${params.end}"
 
 //Reference fasta.gz specified in nextflow.config, override with --reference path_or_url.fasta.gz
-reference = Channel.from(params.reference)
+reference_url = params.reference
 
 //fetch adapters file - either local or remote
 adaptersChannel = Channel.fromPath(params.adapters) //NF will download if remote
@@ -17,16 +17,19 @@ adaptersChannel = Channel.fromPath(params.adapters) //NF will download if remote
 process get_reference {
   tag { "${region}"}
   input:
-    val(ref_url) from reference
+    reference_url
 
   output:
     file('*') into referencesChannel
 
   script:
   """
-  wget ${ref_url}
+  wget ${reference_url}
   """
 }
+
+
+
 
 process bwa_index {
   tag { ref }
@@ -34,7 +37,7 @@ process bwa_index {
     file(ref) from referencesChannel
 
   output:
-    set val(ref), file("*") into indexChannel //also valid: set val("${ref}"), file("*") into indexChannel
+    set val(ref.name), file("*") into indexChannel //also valid: set val("${ref}"), file("*") into indexChannel
 
   script:
   """
@@ -146,33 +149,14 @@ process multiqc_trimmed {
   """
 }
 
-// indexChannel.combine(trimmedReadsChannelA).view()
-// [
-//  reference.fasta.gz,
-//  [
-//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.amb,
-//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.ann,
-//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.bwt,
-//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.pac,
-//    /home/rad/repos/nextflow-embl-abr-webinar/work/c0/c01aea6edd42b4f981d2e97718d0ed/reference.fasta.gz.sa
-//  ],
-//  ACBarrie,
-//  [
-//    /home/rad/repos/nextflow-embl-abr-webinar/work/8f/f03aa5c708c5b39d27e6066d3a8338/ACBarrie_R1.paired.fastq.gz,
-//    /home/rad/repos/nextflow-embl-abr-webinar/work/8f/f03aa5c708c5b39d27e6066d3a8338/ACBarrie_R2.paired.fastq.gz]
-// ]
-
 process bwa_mem {
   tag { accession }
 
   input:
-    // set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
-    // set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
-    set val(accession), file(reads) from trimmedReadsChannelA
-    set val(ref), file(index) from indexChannel
+    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
 
-	// output:
-	// 	file('*.bam') into alignedReadsChannel
+	output:
+		file('*.bam') into alignedReadsChannel
 
   script:
   """
