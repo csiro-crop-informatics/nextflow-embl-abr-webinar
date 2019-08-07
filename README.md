@@ -2,7 +2,6 @@
 
 - [Nextflow installation](#nextflow-installation)
 - [Software environment](#software-environment)
-- [Nextflow version](#nextflow-version)
 - [Before running the pipeline](#before-running-the-pipeline)
   - [Download example input data](#download-example-input-data)
 - [Running the pipeline - execution profiles](#running-the-pipeline---execution-profiles)
@@ -13,19 +12,19 @@
 
 ##  Nextflow installation
 
+[![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.01.0-orange.svg)](https://www.nextflow.io/)
+
+
+
 Check if you have Java 8 or newer (`java -version`, should be 1.8 or newer), and if you do, run
 
 ```
 curl -s https://get.nextflow.io | bash
 ```
 
-This will place the executable in your working directory and you should be able to run it
+This will place the executable in your working directory and you should be able to run it `./nextflow`.
 
-```
-./nextflow
-```
-
-It probably makes sense to move the executable to a [directory accessible via `$PATH`](https://askubuntu.com/questions/60218/how-to-add-a-directory-to-the-path), just to be able to run `nextflow` rather than having to remember to type the full path to nextflow each time you want to run it.
+It is preferable to move the executable to a [directory accessible via `$PATH`](https://askubuntu.com/questions/60218/how-to-add-a-directory-to-the-path), just to be able to run `nextflow` rather than having to remember to type the full path to nextflow each time you want to run it.
 
 Depending on the system this may suffice:
 
@@ -49,12 +48,6 @@ You could also "simply" make sure that all required software is available in the
 * Docker  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
   [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
   [![Docker Cloud build](https://img.shields.io/docker/cloud/build/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
-
-
-## Nextflow version
-
- [![Nextflow](https://img.shields.io/badge/nextflow-19.01.0-orange.svg)](https://www.nextflow.io/)
-
 
 
 ## Before running the pipeline
