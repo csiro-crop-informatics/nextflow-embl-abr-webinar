@@ -3,8 +3,9 @@
 - [Nextflow installation](#nextflow-installation)
 - [Software environment](#software-environment)
 - [Nextflow version](#nextflow-version)
-- [Running the example pipeline](#running-the-example-pipeline)
-- [Execution profiles](#execution-profiles)
+- [Before running the pipeline](#before-running-the-pipeline)
+  - [Download example input data](#download-example-input-data)
+- [Running the pipeline - execution profiles](#running-the-pipeline---execution-profiles)
   - [Local/server profiles](#localserver-profiles)
   - [HPC (SLURM) profiles](#hpc-slurm-profiles)
 - [Running with pre-configured software environment](#running-with-pre-configured-software-environment)
@@ -55,17 +56,24 @@ You could also "simply" make sure that all required software is available in the
  [![Nextflow](https://img.shields.io/badge/nextflow-19.01.0-orange.svg)](https://www.nextflow.io/)
 
 
-## Running the example pipeline
 
-Altough not strictly necessary for running the pipeline, it makes sense
-to start by cloning this repo and moving to the dir
+## Before running the pipeline
+
+Although not strictly necessary for running the pipeline, it makes sense
+to start by cloning this repo and moving to the directory
 
 ```
 git clone ...
 cd ...
 ```
 
-## Execution profiles
+### Download example input data
+
+```
+nextflow run setup_data.nf
+```
+
+## Running the pipeline - execution profiles
 
 The intended use is with one of the execution profiles defined in [nextflow.config](nextflow.config). Profiles define
 * how we access the software environment
