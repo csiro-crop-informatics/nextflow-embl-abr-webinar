@@ -38,14 +38,14 @@ For consistency of how nextflow output is presented in the terminal, you should 
 
 ## Software environment
 
-
-* Conda or either one of Docker or Singularity to run the appropriate container with all the remaining required software.
-
-
-  [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
+Software environment required by the workflow is captured in Docker and Singularity container images we make available on Docker Hub and Singularity Hub. Alternatively you can use Conda environment as specified in [`conf/conda.yaml`](conf/conda.yaml).
+You could also "simply" make sure that all required software is available in the execution environment (not recommended).
 
 
-  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
+* Singularity [![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/2468)
+
+
+* Docker  [![Docker Pulls](https://img.shields.io/docker/pulls/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
   [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
   [![Docker Cloud build](https://img.shields.io/docker/cloud/build/rsuchecki/nextflow-embl-abr-webinar.svg)](https://hub.docker.com/r/rsuchecki/nextflow-embl-abr-webinar)
 
@@ -79,12 +79,11 @@ nextflow run main.nf -profile docker
 nextflow run main.nf -profile singularity
 ```
 
-
 ### HPC (SLURM) profiles
 
 ```
 nextflow run main.nf -profile slurm,conda
-nextflow run main.nf -profile slurm,singularity,
+nextflow run main.nf -profile slurm,singularity
 ```
 
 ## Running with pre-configured software environment
@@ -97,7 +96,6 @@ nextflow run main.nf
 ```
 
 or
-
 
 ```
 nextflow run main.nf -profile slurm
