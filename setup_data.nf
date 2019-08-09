@@ -28,7 +28,7 @@ process get_reference { //alternative: referencesChannel = Channel.fromPath(para
 
 process get_reads {
   tag { "${accession} @ ${region}"}
-  publishDir "data/${region}"
+  publishDir "data/${region}", mode: 'copy'
 
   input:
     val accession from accessionsChannel
