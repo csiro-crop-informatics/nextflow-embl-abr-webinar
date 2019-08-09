@@ -2,14 +2,13 @@
 
 region = "${params.chr}_${params.start}-${params.end}"
 
-referencesChannel = Channel.fromPath("data/${region}/*.fasta.gz")
+Channel.fromPath("data/${region}/*.fasta.gz").set{ referencesChannel }
 
-//fetch adapters file - either local or remote
-adaptersChannel = Channel.fromPath(params.adapters) //NF will download if remote
+Channel.fromPath(params.adapters).set{ adaptersChannel } //NF will download if remote
 
 Channel.fromFilePairs("data/${region}/*_R{1,2}.fastq.gz")
-.take( params.take == 'all' ? -1 : params.take ) //Use --take N to process first N accessions or --take all to process all
-.into { extractedReadsChannelA; extractedReadsChannelB }
+  .take ( params.take == 'all' ? -1 : params.take ) //Use --take N to process first N accessions or --take all to process all
+  .into { readPairsChannelA; readPairsChannelB } //send each item into two separate channels
 
 process bwa_index {
   tag { ref }
@@ -31,7 +30,7 @@ process fastqc_raw {
   tag { accession }
 
   input:
-    set val(accession), file('*') from extractedReadsChannelA
+    set val(accession), file('*') from readPairsChannelA
 
   output:
     file('*') into fastqcRawResultsChannel
@@ -47,7 +46,7 @@ process multiqc_raw {
     file('*') from fastqcRawResultsChannel.collect()
 
   output:
-    file('*') into multiqcRawResultsChannel
+    file('*') into multiqcRawResults
 
   script:
   """
@@ -60,10 +59,10 @@ process trimmomatic_pe {
   tag {accession}
 
   input:
-    set file(adapters), val(accession), file('*') from adaptersChannel.combine(extractedReadsChannelB)
+    set file(adapters), val(accession), file('*') from adaptersChannel.combine(readPairsChannelB)
 
   output:
-    set val(accession), file('*.paired.fastq.gz') into (trimmedReadsChannelA, trimmedReadsChannelB)
+    set val(accession), file('*.paired.fastq.gz') into trimmedReadsChannelA, trimmedReadsChannelB
 
   script:
   """
@@ -77,7 +76,9 @@ process trimmomatic_pe {
     LEADING:2 \
     TRAILING:2 \
     SLIDINGWINDOW:4:15 \
-    MINLEN:36
+    MINLEN:36 \
+    -Xms256m \
+    -Xmx256m
   """
 }
 
@@ -85,7 +86,7 @@ process fastqc_trimmed {
   tag { accession }
 
   input:
-    set val(accession), file('*') from trimmedReadsChannelB
+    set val(accession), file('*') from trimmedReadsChannelA
 
   output:
     file('*') into fastqcTrimmedResultsChannel
@@ -101,7 +102,7 @@ process multiqc_trimmed {
     file('*') from fastqcTrimmedResultsChannel.collect()
 
   output:
-    file('*') into multiqcTrimmedResultsChannel
+    file('*') into multiqcTrimmedResults
 
   script:
   """
@@ -113,7 +114,7 @@ process bwa_mem {
   tag { accession }
 
   input:
-    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelA)
+    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelB)
 
 	output:
 		file('*.bam') into alignedReadsChannel
