@@ -63,8 +63,9 @@ Although not strictly necessary for running the pipeline, it makes sense
 to start by cloning this repo and moving to the directory
 
 ```
-git clone ...
-cd ...
+git clone https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar.git
+cd nextflow-embl-abr-webinar
+git checkout workshop
 ```
 
 ### Download example input data
