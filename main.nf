@@ -1,16 +1,13 @@
 #!/usr/bin/env nextflow
 
-//Chromosomal region for which we have a referrence and reads
-region = "${params.chr}_${params.start}-${params.end}"
-
 //Adapters for read trimming
 Channel.fromPath(params.adapters).set{ adaptersChannel } //NF will download if remote
 
 //Reference "genome"
-Channel.fromPath("data/${region}/*.fasta.gz").set{ referencesChannel }
+Channel.fromPath("data/**.fasta.gz").set{ referencesChannel }
 
 //Read pairs
-Channel.fromFilePairs("data/${region}/*_R{1,2}.fastq.gz")
+Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
   .take ( params.take == 'all' ? -1 : params.take ) //Use --take N to process first N accessions or --take all to process all
   .into { readPairsChannelA; readPairsChannelB } //send each item into two separate channels
 
@@ -27,8 +24,6 @@ process bwa_index {
   bwa index -a bwtsw ${ref}
   """
 }
-
-
 
 process fastqc_raw {
   tag { accession }
