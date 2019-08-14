@@ -18,7 +18,7 @@ process get_reference { //alternative: referencesChannel = Channel.fromPath(para
     reference_url
 
   output:
-    file('*') into referencesChannel
+    file('*')
 
   script:
   """
@@ -35,7 +35,7 @@ process get_reads {
     //e.g. ACBarrie
 
   output:
-    set val(accession), file("${accession}_R?.fastq.gz") into (extractedReadsChannelA, extractedReadsChannelB)
+    set val(accession), file("${accession}_R?.fastq.gz")
     //e.g. ACBarrie, [ACBarrie_R1.fastq.gz, ACBarrie_R2.fastq.gz]
 
   script:
