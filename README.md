@@ -18,7 +18,6 @@ In this webinar we will follow the steps required for developing sharable, versi
 **Video link:** [EMBL-ABR YouTube Channel](https://www.youtube.com/channel/UC5WlFNBSfmt3e8Js8o2fFqQ)
 
 [![Nextflow Webinar Video](http://img.youtube.com/vi/lqm-VV5dOgk/hqdefault.jpg)](http://www.youtube.com/watch?v=lqm-VV5dOgk)
-https://youtu.be/lqm-VV5dOgk?t=90
 
 **Slides**
 
