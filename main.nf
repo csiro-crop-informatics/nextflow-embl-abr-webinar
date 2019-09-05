@@ -8,7 +8,14 @@ Channel.fromPath("data/**.fasta.gz").set{ referencesChannel }
 
 //Read pairs
 Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
-  .take ( params.take == 'all' ? -1 : params.take ) //Use --take N to process first N accessions or --take all to process all
+  .take ( {
+    if(params.take == 'all') {
+      return -1 //.take() treats -1 as "let all emissions through"
+    } else {
+      return params.take // "let first n emissions through" - as specified using --take n runtime param
+    }
+  }() )
+  // .take ( params.take == 'all' ? -1 : params.take ) //Alternative (ternary) syntax; At run time, use --take n to process first n accessions or --take all to process all accessions
   .into { readPairsChannelA; readPairsChannelB } //send each item into two separate channels
 
 process bwa_index {
@@ -122,3 +129,4 @@ process bwa_mem {
   bwa mem -t ${task.cpus} -R '@RG\\tID:${accession}\\tSM:${accession}' ${ref} ${reads} | samtools view -b > ${accession}.bam
   """
 }
+
