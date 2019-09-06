@@ -60,7 +60,6 @@ NF will download if file is remote (ftp, http, https)
 */
 Channel.fromPath(params.adapters).set{ adaptersChannel }
 
-
 process trimmomatic_pe {
   tag {accession}
 
@@ -87,7 +86,6 @@ process trimmomatic_pe {
     -Xmx256m
   """
 }
-
 
 process bwa_mem {
   tag { accession }
