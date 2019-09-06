@@ -1,12 +1,25 @@
 #!/usr/bin/env nextflow
 
-//Adapters for read trimming
-Channel.fromPath(params.adapters).set{ adaptersChannel } //NF will download if remote
+/*
+Locate the adapters file for read trimming, emit it through the adaptersChannel.
+NF will download if file is remote (ftp, http, https)
+*/
+Channel.fromPath(params.adapters).set{ adaptersChannel }
 
-//Reference "genome"
+/*
+Locate the reference file, emit it through the referencesChannel.
+We expect only a single reference but this syntax
+allows to have muliple if needed.
+*/
 Channel.fromPath("data/**.fasta.gz").set{ referencesChannel }
 
-//Read pairs
+/*
+Locate paired FATSQ files, emit each pair seperately
+in the form [common_prefix_string, [R1_file, R2_file]]
+- The .take() operator allows us to limit how many pairs
+  are emitted during a given run of the workflow.
+- The .into{ } operator allows us to fork the newly created channel
+*/
 Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
   .take ( {
     if(params.take == 'all') {
@@ -15,8 +28,9 @@ Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
       return params.take // "let first n emissions through" - as specified using --take n runtime param
     }
   }() )
-  // .take ( params.take == 'all' ? -1 : params.take ) //Alternative (ternary) syntax; At run time, use --take n to process first n accessions or --take all to process all accessions
+  // .take ( params.take == 'all' ? -1 : params.take ) //Alternative (ternary) syntax
   .into { readPairsForQcChannel; readPairsForTrimmingChannel } //send each item into two separate channels
+
 
 process bwa_index {
   tag { ref }
@@ -32,7 +46,7 @@ process bwa_index {
   """
 }
 
-process fastqc_raw {
+process fastqc {
   tag { accession }
 
   input:
@@ -47,18 +61,6 @@ process fastqc_raw {
   """
 }
 
-process multiqc_raw {
-  input:
-    file('*') from fastqcRawResultsChannel.collect()
-
-  output:
-    file('*') into multiqcRawResults
-
-  script:
-  """
-  multiqc .
-  """
-}
 
 process trimmomatic_pe {
   tag {accession}
@@ -67,7 +69,7 @@ process trimmomatic_pe {
     set file(adapters), val(accession), file('*') from adaptersChannel.combine(readPairsForTrimmingChannel)
 
   output:
-    set val(accession), file('*.paired.fastq.gz') into trimmedReadsChannelA, trimmedReadsChannelB
+    set val(accession), file('*.paired.fastq.gz') into trimmedReadsChannel
 
   script:
   """
@@ -87,46 +89,19 @@ process trimmomatic_pe {
   """
 }
 
-process fastqc_trimmed {
-  tag { accession }
-
-  input:
-    set val(accession), file('*') from trimmedReadsChannelA
-
-  output:
-    file('*') into fastqcTrimmedResultsChannel
-
-  script:
-  """
-  fastqc --quiet --threads ${task.cpus} *
-  """
-}
-
-process multiqc_trimmed {
-  input:
-    file('*') from fastqcTrimmedResultsChannel.collect()
-
-  output:
-    file('*') into multiqcTrimmedResults
-
-  script:
-  """
-  multiqc .
-  """
-}
 
 process bwa_mem {
   tag { accession }
 
   input:
-    set val(ref), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannelB)
+    set val(ref_basename), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannel)
 
 	output:
 		file('*.bam') into alignedReadsChannel
 
   script:
   """
-  bwa mem -t ${task.cpus} -R '@RG\\tID:${accession}\\tSM:${accession}' ${ref} ${reads} | samtools view -b > ${accession}.bam
+  bwa mem -t ${task.cpus} -R '@RG\\tID:${accession}\\tSM:${accession}' ${ref_basename} ${reads} | samtools view -b > ${accession}.bam
   """
 }
 
