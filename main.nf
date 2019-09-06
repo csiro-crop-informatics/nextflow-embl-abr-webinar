@@ -86,19 +86,3 @@ process trimmomatic_pe {
     -Xmx256m
   """
 }
-
-process bwa_mem {
-  tag { accession }
-
-  input:
-    set val(ref_basename), file('*'), val(accession), file(reads) from indexChannel.combine(trimmedReadsChannel)
-
-	output:
-		file('*.bam') into alignedReadsChannel
-
-  script:
-  """
-  bwa mem -t ${task.cpus} -R '@RG\\tID:${accession}\\tSM:${accession}' ${ref_basename} ${reads} | samtools view -b > ${accession}.bam
-  """
-}
-
