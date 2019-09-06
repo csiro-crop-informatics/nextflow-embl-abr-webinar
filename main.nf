@@ -16,7 +16,7 @@ Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
     }
   }() )
   // .take ( params.take == 'all' ? -1 : params.take ) //Alternative (ternary) syntax; At run time, use --take n to process first n accessions or --take all to process all accessions
-  .into { readPairsChannelA; readPairsChannelB } //send each item into two separate channels
+  .into { readPairsForQcChannel; readPairsForTrimmingChannel } //send each item into two separate channels
 
 process bwa_index {
   tag { ref }
@@ -36,7 +36,7 @@ process fastqc_raw {
   tag { accession }
 
   input:
-    set val(accession), file('*') from readPairsChannelA
+    set val(accession), file('*') from readPairsForQcChannel
 
   output:
     file('*') into fastqcRawResultsChannel
@@ -64,7 +64,7 @@ process trimmomatic_pe {
   tag {accession}
 
   input:
-    set file(adapters), val(accession), file('*') from adaptersChannel.combine(readPairsChannelB)
+    set file(adapters), val(accession), file('*') from adaptersChannel.combine(readPairsForTrimmingChannel)
 
   output:
     set val(accession), file('*.paired.fastq.gz') into trimmedReadsChannelA, trimmedReadsChannelB
