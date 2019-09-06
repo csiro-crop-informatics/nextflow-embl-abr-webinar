@@ -36,7 +36,7 @@ Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
     }
   }() )
   // .take ( params.take == 'all' ? -1 : params.take ) //Alternative (ternary) syntax
-  .into { readPairsForQcChannel; readPairsForTrimmingChannel } //send each item into two separate channels
+  .set { readPairsForQcChannel } //emit each item through this channel
 
 
 process fastqc {
