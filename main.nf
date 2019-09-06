@@ -53,36 +53,3 @@ process fastqc {
   fastqc  --quiet --threads ${task.cpus} ${reads}
   """
 }
-
-/*
-Locate the adapters file for read trimming, emit it through the adaptersChannel.
-NF will download if file is remote (ftp, http, https)
-*/
-Channel.fromPath(params.adapters).set{ adaptersChannel }
-
-process trimmomatic_pe {
-  tag {accession}
-
-  input:
-    set file(adapters), val(accession), file(reads) from adaptersChannel.combine(readPairsForTrimmingChannel)
-
-  output:
-    set val(accession), file('*.paired.fastq.gz') into trimmedReadsChannel
-
-  script:
-  """
-  trimmomatic PE \
-    ${reads} \
-    ${accession}_R1.paired.fastq.gz \
-    ${accession}_R1.unpaired.fastq.gz \
-    ${accession}_R2.paired.fastq.gz \
-    ${accession}_R2.unpaired.fastq.gz \
-    ILLUMINACLIP:${adapters}:2:30:10:3:true \
-    LEADING:2 \
-    TRAILING:2 \
-    SLIDINGWINDOW:4:15 \
-    MINLEN:36 \
-    -Xms256m \
-    -Xmx256m
-  """
-}
