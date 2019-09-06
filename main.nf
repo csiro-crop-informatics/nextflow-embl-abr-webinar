@@ -1,17 +1,24 @@
 #!/usr/bin/env nextflow
 
 /*
-Locate the adapters file for read trimming, emit it through the adaptersChannel.
-NF will download if file is remote (ftp, http, https)
-*/
-Channel.fromPath(params.adapters).set{ adaptersChannel }
-
-/*
 Locate the reference file, emit it through the referencesChannel.
 We expect only a single reference but this syntax
 allows to have muliple if needed.
 */
 Channel.fromPath("data/**.fasta.gz").set{ referencesChannel }
+
+process bwa_index {
+  input:
+    file(ref) from referencesChannel
+
+  output:
+    set val("${ref}"), file("*") into indexChannel //also valid: set val(ref.name), file("*") into indexChannel
+
+  script:
+  """
+  bwa index -a bwtsw ${ref}
+  """
+}
 
 /*
 Locate paired FATSQ files, emit each pair seperately
@@ -32,20 +39,6 @@ Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
   .into { readPairsForQcChannel; readPairsForTrimmingChannel } //send each item into two separate channels
 
 
-process bwa_index {
-  tag { ref }
-  input:
-    file(ref) from referencesChannel
-
-  output:
-    set val(ref.name), file("*") into indexChannel //also valid: set val("${ref}"), file("*") into indexChannel
-
-  script:
-  """
-  bwa index -a bwtsw ${ref}
-  """
-}
-
 process fastqc {
   tag { accession }
 
@@ -60,6 +53,12 @@ process fastqc {
   fastqc  --quiet --threads ${task.cpus} *
   """
 }
+
+/*
+Locate the adapters file for read trimming, emit it through the adaptersChannel.
+NF will download if file is remote (ftp, http, https)
+*/
+Channel.fromPath(params.adapters).set{ adaptersChannel }
 
 
 process trimmomatic_pe {
