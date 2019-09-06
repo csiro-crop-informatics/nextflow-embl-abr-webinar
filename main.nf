@@ -98,7 +98,7 @@ process bwa_mem {
 
   script:
   """
-  bwa mem -t ${task.cpus} -R '@RG\\tID:${accession}\\tSM:${accession}' ${ref_basename} ${reads} | samtools view -b > ${accession}.bam
+  bwa mem -t ${task.cpus} ${ref_basename} ${reads} | samtools view -b > ${accession}.bam
   """
 }
 
