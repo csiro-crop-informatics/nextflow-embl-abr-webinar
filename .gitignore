@@ -1,1 +1,5 @@
 .nextflow*
+.data/
+work/
+singularity-images/
+results/
