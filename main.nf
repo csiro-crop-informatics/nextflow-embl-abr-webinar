@@ -43,14 +43,14 @@ process fastqc {
   tag { accession }
 
   input:
-    set val(accession), file('*') from readPairsForQcChannel
+    set val(accession), file(reads) from readPairsForQcChannel
 
   output:
     file('*') into fastqcRawResultsChannel
 
   script:
   """
-  fastqc  --quiet --threads ${task.cpus} *
+  fastqc  --quiet --threads ${task.cpus} ${reads}
   """
 }
 
@@ -65,7 +65,7 @@ process trimmomatic_pe {
   tag {accession}
 
   input:
-    set file(adapters), val(accession), file('*') from adaptersChannel.combine(readPairsForTrimmingChannel)
+    set file(adapters), val(accession), file(reads) from adaptersChannel.combine(readPairsForTrimmingChannel)
 
   output:
     set val(accession), file('*.paired.fastq.gz') into trimmedReadsChannel
@@ -73,7 +73,7 @@ process trimmomatic_pe {
   script:
   """
   trimmomatic PE \
-    *.fastq.gz \
+    ${reads} \
     ${accession}_R1.paired.fastq.gz \
     ${accession}_R1.unpaired.fastq.gz \
     ${accession}_R2.paired.fastq.gz \
