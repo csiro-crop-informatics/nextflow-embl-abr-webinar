@@ -5,7 +5,7 @@ Locate the reference file, emit it through the referencesChannel.
 We expect only a single reference but this syntax
 allows to have muliple if needed.
 */
-Channel.fromPath("data/**.fasta.gz").set{ referencesChannel }
+Channel.fromPath("data/references/reference.fasta.gz").set{ referencesChannel }
 
 process bwa_index {
   input:
@@ -21,29 +21,21 @@ process bwa_index {
 }
 
 /*
-Locate paired FATSQ files, emit each pair seperately
-in the form [common_prefix_string, [R1_file, R2_file]]
-- The .take() operator allows us to limit how many pairs
+Locate FATSQ files, emit each read file seperately
+- The .take(n) operator allows us to limit how many files
   are emitted during a given run of the workflow.
-- The .into{ } operator allows us to fork the newly created channel
+- The .first() and .last() operatorsa are redundant given .take(1)
 */
-Channel.fromFilePairs("data/**_R{1,2}.fastq.gz")
-  .take ( {
-    if(params.take == 'all') {
-      return -1 //.take() treats -1 as "let all emissions through"
-    } else {
-      return params.take // "let first n emissions through" - as specified using --take n runtime param
-    }
-  }() )
-  // .take ( params.take == 'all' ? -1 : params.take ) //Alternative (ternary) syntax
-  .set { readPairsForQcChannel } //emit each item through this channel
-
+Channel.fromPath("data/raw_reads/*.fastq.gz")
+  .take(1)
+  .first()
+  .last()
+  .set { readsForQcChannel }
 
 process fastqc {
-  tag { accession }
-
+  tag { reads.name }
   input:
-    set val(accession), file(reads) from readPairsForQcChannel
+    file(reads) from readsForQcChannel
 
   output:
     file('*') into fastqcRawResultsChannel
