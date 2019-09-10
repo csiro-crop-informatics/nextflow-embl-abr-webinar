@@ -6,9 +6,9 @@ process get_versions {
 
   script:
   """
-  echo -n "bwa ";  bwa 2>&1 | grep 'Version'
-  echo -n "samtools ";  samtools 2>&1 | grep 'Version'
   fastqc --version
   multiqc --version
+  echo -n "bwa " &&  bwa 2>&1 | grep 'Version'
+  echo -n "samtools "&&  samtools 2>&1 | grep 'Version'
   """
 }
