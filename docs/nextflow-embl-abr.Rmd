@@ -242,49 +242,6 @@ curl -s https://get.nextflow.io | bash
 
 ----
 
-## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
-
-
-```{bash, comment='', cache = FALSE, echo = TRUE}
-cat ../main.nf
-```
-
-
-
-----
-
-## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar)
-
-
-```{bash, comment='', eval = FALSE}
-nextflow run ../main.nf -profile docker
-```
-
-```{bash, comment='', echo = FALSE}
-NXF_VER=19.01.0 nextflow run ../main.nf -profile docker
-```
-
-
-----
-
-## The work directory (1/2)
-
-```{bash, comment='', cache=FALSE}
-tree -L 2 work
-```
-
-----
-
-## The work directory (2/2)
-
-
-```{bash, comment='', cache=FALSE}
-tree -ah work
-```
-
-
-----
-
 ## [Example workflow run](https://asciinema.org/a/233197)
 
 <small>
@@ -294,13 +251,6 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
 <script id="asciicast-233197" src="https://asciinema.org/a/233197.js" async data-speed="1.5" data-theme="tango" data-autoplay="false" data-loop="false" data-size="small" data-rows="40">
 
 </script>
-
-
-<!-- [![asciicast](https://asciinema.org/a/233197.svg)](https://asciinema.org/a/233197) -->
-
-<!-- data-cols="200" data-rows="50"  -->
-
-
 
 
 ----
@@ -538,9 +488,9 @@ Refresh page to see the embedded asciicast or go to [https://asciinema.org/a/233
   * Paolo Di Tommaso [\@PaoloDiTommaso](https://twitter.com/paoloditommaso?lang=en)
   * Evan Floden [\@EvanFloden](https://twitter.com/EvanFloden)
   * *et al.*
-* Nextflow community on [Gitter](https://gitter.im/nextflow-io/nextflow)
 * University of Adelaide
   * Nathan Watson-Haigh [\@watsonhaigh](https://twitter.com/watsonhaigh)
+* Nextflow community on [Gitter](https://gitter.im/nextflow-io/nextflow)
 * CSIRO
   * Alex Whan [\@alexwhan](https://twitter.com/alexwhan)
   * Jen Taylor [\@JenMTaylor](https://twitter.com/JenMTaylor)
