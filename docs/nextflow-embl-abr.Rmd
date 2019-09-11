@@ -1,9 +1,9 @@
 ---
 title: "Nextflow"
 author:
-- Rad Suchecki (CSIRO)
-subtitle: "Scalable, Sharable and Reproducible Computational Workflows across Clouds and Clusters"
-# date: "<center> EMBL-ABR webinar <br/> `r format(Sys.time(), '%A, %d %B, %Y')` </center>"
+- Rad Suchecki (CSIRO Crop Bioinformatics and Data Science)
+subtitle: "Implementing Scalable Bioinformatic Workflows"
+date: "<center> EMBL-ABR webinar <br/> `r format(Sys.time(), '%A, %d %B, %Y')` </center>"
 # tags: [one, another]
 output:
   #pdf_document:
@@ -239,123 +239,6 @@ curl -s https://get.nextflow.io | bash
 * via Singularity
 * via Conda
 * via Modules
-
-----
-
-## Hello world syntax
-
-```{bash, comment='', echo = TRUE}
-curl -sL  https://raw.githubusercontent.com/nextflow-io/hello/master/main.nf
-```
-
-
-
-----
-
-## Hello world run
-
-```{bash, comment='', eval = FALSE}
-nextflow run hello
-```
-
-```{bash, comment='', echo = FALSE}
-#specific version for this webinar
-NXF_VER=19.01.0 \
-nextflow run hello
-```
-
-----
-
-## Hello world how?
-
-
-```{bash, comment=''}
-nextflow info hello
-```
-
-Alternatives
-
-```{bash, eval=FALSE}
-nextflow run nextflow-io/hello #more explicit pointer to organisation/repo (or user/repo) on GitHub
-nextflow run main.nf #local exec after download/clone
-```
-
-
-----
-
-## [Hello  ~~world~~ shared pipelines](https://www.nextflow.io/blog/2014/share-nextflow-pipelines-with-github.html)
-
-* Run specific revision (commit SHA hash, branch or tag)
-
-
-```{bash, eval=FALSE}
-nextflow run hello -r 451ebd9
-```
-
-```{bash, eval=FALSE}
-nextflow run hello -r mybranch
-```
-
-```{bash, comment='', eval=FALSE}
-nextflow run hello -r v1.1
-```
-
-```{bash, comment='', echo=FALSE}
-NXF_VER=19.01.0 \
-nextflow run hello -r v1.1
-```
-
-
-
-----
-
-## Command line syntax basics
-
-* Single dash (`-`) for Nextflow params
-```{bash, eval=FALSE}
-nextflow run main.nf -with-dag mydag.png -with-docker -resume
-```
-
-<small>
-`-resume` prevents re-running of tasks when relevant inputs/scripts unchanged
-</small>
-
-* Double dash (`--`) for pipeline params (defined by you)
-```{bash, eval=FALSE}
-nextflow run main.nf --input sample.fastq.gz --foo bar
-```
-
-
-<small>
-Filename `sample.fastq.gz` will be available to NF under `params.input`.
-</small>
-
-* Many params can also be set via [environmental variables](https://www.nextflow.io/docs/latest/config.html#environment-variables)
-```{bash, eval=FALSE}
-NXF_VER=19.01.0 nextflow run main.nf
-```
-
-
-
-----
-
-<!-- ## [Example workflow](https://github.com/csiro-crop-informatics/nextflow-embl-abr-webinar) -->
-
-
-```{bash, echo = FALSE}
-dot -Tpng -Gsize=9,7\! -Gdpi=100 -ofigs/flowchart_small.png flowinfo/flowchart.dot
-```
-
-<!-- <div class="column-right"> -->
-![Flowchart](figs/flowchart_small.png)
-<!-- </div> -->
-
-<!-- <div class="column-left"> -->
-  <small>
-  Logic (and input data) of this example workflow is adapted from EMBL-ABR [Snakemake webinar](https://github.com/UofABioinformaticsHub/2019_EMBL-ABR_Snakemake_webinar) by Nathan Watson-Haigh
-  </small>
-<!-- </div> -->
-
 
 ----
 
