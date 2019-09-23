@@ -1,8 +1,9 @@
 ---
-title: "Nextflow"
+title: "Implementing Scalable Bioinformatic Workflows "
 author:
 - Rad Suchecki (CSIRO Crop Bioinformatics and Data Science)
-subtitle: "Implementing Scalable Bioinformatic Workflows"
+- Nathan Watson-Haigh (University of Adelaide Bioinformatics Hub)
+subtitle: "Nextflow"
 date: "<center> EMBL-ABR webinar <br/> `r format(Sys.time(), '%A, %d %B, %Y')` </center>"
 # tags: [one, another]
 output:
@@ -178,6 +179,13 @@ knitr::opts_chunk$set(cache=TRUE)
 Credit: [Evan Floden](https://speakerdeck.com/skptic/nextflow-hackathon-2018-introduction-to-nextflow?slide=15)
 </small>
 
+
+
+----
+
+## Practical (1)
+
+----
 
 
 ----
