@@ -77,6 +77,43 @@ knitr::opts_chunk$set(cache=TRUE)
 
 ----
 
+
+<div class="column-left">
+
+[![https://www.nature.com/articles/d41586-019-02619-z](figs/wflows.jpg){ width=100% }](https://www.nature.com/articles/d41586-019-02619-z)
+
+<small> [https://www.nature.com/articles/d41586-019-02619-z](https://www.nature.com/articles/d41586-019-02619-z) </small>
+</div>
+
+<div class="column-right" style="center">
+
+### Workflow systems turn raw data into scientific knowledge
+
+* Reinventing the wheel is pointless, but for computational biologists it’s sometimes unavoidable
+* Large, complex code base of
+  * “Bits had been bolted on in an ad hoc fashion over seven years by at least four different developers.”
+  * “heavily tied to the compute infrastructure”
+
+</div>
+
+
+---
+
+### Workflow systems turn raw data into scientific knowledge
+
+* So, do you need a workflow system?
+  * Not every task requires one, and there is a learning curve.
+  * Scripting usually suffices for one-off tasks and when working out the pipeline itself.
+  * But The tipping point, most agree, comes when you need to run the same workflow over and over again, or if the data are likely to be published.
+
+* Philip Ewels:
+  * The languages are easy to pick up, and examples are abundant.
+  * Once you’re familiar with it, you get in the habit of using it, **And then you wonder how you ever lived without it.**
+
+<small> [https://www.nature.com/articles/d41586-019-02619-z](https://www.nature.com/articles/d41586-019-02619-z) </small>
+
+----
+
 <div class="column-left">
 
 [![https://xkcd.com/242/](https://imgs.xkcd.com/comics/the_difference.png){ width=80% }](https://xkcd.com/242/)
